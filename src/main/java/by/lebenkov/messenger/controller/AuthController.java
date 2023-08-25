@@ -1,6 +1,7 @@
 package by.lebenkov.messenger.controller;
 
 import by.lebenkov.messenger.model.Account;
+import by.lebenkov.messenger.service.CaptchaService;
 import by.lebenkov.messenger.service.RegistrationService;
 import by.lebenkov.messenger.util.AccountValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,13 @@ public class AuthController {
 
     private final RegistrationService registrationService;
     private final AccountValidator accountValidator;
-/*    private final CaptchaService captchaService;*/
+    private final CaptchaService captchaService;
 
     @Autowired
-    public AuthController(RegistrationService registrationService, AccountValidator accountValidator) { // ,CaptchaService captchaService
+    public AuthController(RegistrationService registrationService, AccountValidator accountValidator, CaptchaService captchaService) { // ,CaptchaService captchaService
         this.registrationService = registrationService;
         this.accountValidator = accountValidator;
-/*        this.captchaService = captchaService;*/
+        this.captchaService = captchaService;
     }
 
     @GetMapping("/login")
@@ -36,18 +37,18 @@ public class AuthController {
     }
 
     @PostMapping("/registration")
-    public String performRegistration(@ModelAttribute("account") @Valid Account account, BindingResult bindingResult
-                                      ) { //@RequestParam(name = "g-recaptcha-response") String recaptchaResponse
-/*        boolean isCaptchaValid = captchaService.isCaptchaValid(recaptchaResponse);
-
-        if (!isCaptchaValid) {
-            bindingResult.reject("captchaError", "Проверка reCaptcha не прошла. Пожалуйста, попробуйте еще раз.");
-        }*/
-
+    public String performRegistration(@ModelAttribute("account") @Valid Account account, BindingResult bindingResult,
+                                      @RequestParam(name = "g-recaptcha-response") String recaptchaResponse) { //
         accountValidator.validate(account, bindingResult);
 
         if (bindingResult.hasErrors()) {
             return "authentication/registration";
+        }
+
+        boolean isCaptchaValid = captchaService.isCaptchaValid(recaptchaResponse);
+
+        if (!isCaptchaValid) {
+            bindingResult.reject("captchaError", "Проверка reCaptcha не прошла. Пожалуйста, попробуйте еще раз.");
         }
 
         registrationService.register(account);
