@@ -56,9 +56,13 @@ body {
     text-decoration: none;
 }
 
-.settings-image, .user-image {
+.settings-image, .user-image, .exist-image {
     width: 28px;
     height: 28px;
+}
+
+.exist-image {
+    border-radius: 50%;
 }
 
 .about-image {

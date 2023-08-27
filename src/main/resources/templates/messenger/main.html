@@ -16,15 +16,14 @@
 		</a>
 	</div>
 	<div class="right-side">
-		<a href="/messages/messages">
+		<a href="/profile">
 			<img src="/images/settings.svg" alt="Settings" class="settings-image">
 		</a>
 		<a href="/messages/messages">
 			<img src="/images/about.svg" alt="About" class="about-image">
 		</a>
-		<a href="/messages/messages">
-			<img src="/images/avatar.svg" alt="User" class="user-image">
-		</a>
+		<img th:if="${account.profilePicture}" th:src="${account.profilePicture}" alt="Profile Picture" class="exist-image"/>
+		<img th:unless="${account.profilePicture}" src="/images/avatar.svg" alt="Profile Picture" class="user-image"/>
 	</div>
 </div>
 <script src="/scripts/menu.js"></script>

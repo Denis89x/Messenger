@@ -27,4 +27,10 @@ public class MessengerService {
 
         model.addAttribute("account", account.orElse(null));
     }
+
+    public Account getAuthenticatedAccount() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return accountRepository.findByUsername(username).orElse(null);
+    }
 }
