@@ -49,7 +49,6 @@
 <!--				<div class="alert alert-danger" th:if="${#fields.hasErrors('newUsername')}" id="validationForm">
 					<p th:each="error : ${#fields.errors('newUsername')}" th:text="${error}" class="error-text"></p>
 				</div>-->
-
 				<div class="alert alert-danger" th:if="${usernameError}" id="usernameError">
 					<p th:text="${usernameError}"></p>
 				</div>
@@ -60,7 +59,7 @@
 					<hr class="pr-hr">
 				</form>
 			</div>
-			<!--<div>
+			<div>
 				<button class="okay-btn" onclick="togglePasswordForm()">Change the password</button>
 				<div class="alert alert-danger" th:if="${passwordError}">
 					<p th:text="${passwordError}"></p>
@@ -82,7 +81,7 @@
 					<hr class="pr-hr">
 				</form>
 			</div>
-			<div>
+			<!--<div>
 				<p th:text="${maskedEmail}" class="username-text"></p>
 				<button class="okay-btn" onclick="toggleEmailForm()">Change email</button>
 				<div class="alert alert-danger" th:if="${emailError}" id="validationEmailForm">

@@ -1,21 +1,25 @@
 package by.lebenkov.messenger.controller;
 
+import by.lebenkov.messenger.dto.ChangePasswordDTO;
 import by.lebenkov.messenger.model.Account;
 import by.lebenkov.messenger.service.AccountServiceImp;
 import by.lebenkov.messenger.service.MessengerService;
 import by.lebenkov.messenger.service.PictureServiceImp;
+import by.lebenkov.messenger.util.ChangePasswordValidator;
 import by.lebenkov.messenger.util.ChangeUsernameValidator;
 import com.backblaze.b2.client.exceptions.B2Exception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import by.lebenkov.messenger.dto.ChangeUsernameDTO;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -26,13 +30,17 @@ public class ProfileController {
     private final MessengerService messengerService;
     private final PictureServiceImp pictureServiceImp;
     private final ChangeUsernameValidator changeUsernameValidator;
+    private final ChangePasswordValidator changePasswordValidator;
+    private final PasswordEncoder passwordEncoder;
     private final AccountServiceImp accountServiceImp;
 
     @Autowired
-    public ProfileController(MessengerService messengerService, PictureServiceImp pictureServiceImp, ChangeUsernameValidator changeUsernameValidator, AccountServiceImp accountServiceImp) {
+    public ProfileController(MessengerService messengerService, PictureServiceImp pictureServiceImp, ChangeUsernameValidator changeUsernameValidator, ChangePasswordValidator changePasswordValidator, PasswordEncoder passwordEncoder, AccountServiceImp accountServiceImp) {
         this.messengerService = messengerService;
         this.pictureServiceImp = pictureServiceImp;
         this.changeUsernameValidator = changeUsernameValidator;
+        this.changePasswordValidator = changePasswordValidator;
+        this.passwordEncoder = passwordEncoder;
         this.accountServiceImp = accountServiceImp;
     }
 
@@ -106,9 +114,9 @@ public class ProfileController {
     public String changeUsername(@Valid ChangeUsernameDTO changeUsernameDTO, BindingResult bindingResult, Model model) {
         Account account = messengerService.getAuthenticatedAccount();
 
-        changeUsernameValidator.validate(changeUsernameDTO, bindingResult);
-        model.addAttribute("changeUsernameDTO", new ChangeUsernameDTO());
         if (account != null) {
+            changeUsernameValidator.validate(changeUsernameDTO, bindingResult);
+
             if (bindingResult.hasErrors()) {
                 messengerService.getAccount(model);
                 model.addAttribute("usernameError", "Логин уже занят или некорректно введён");
@@ -138,4 +146,30 @@ public class ProfileController {
         }
     }
 
+    @PostMapping("/change-password")
+    public String changePassword(@Valid ChangePasswordDTO changePasswordDTO, BindingResult bindingResult, Model model) {
+        Account account = messengerService.getAuthenticatedAccount();
+        messengerService.getAccount(model);
+        if (account != null) {
+            changePasswordValidator.validate(changePasswordDTO, bindingResult);
+
+            if (bindingResult.hasErrors()) {
+                messengerService.getAccount(model);
+                model.addAttribute("passwordError", "Неверный формат нового пароля.");
+                return "profile/user";
+            }
+
+            if (passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), account.getPassword())) {
+                account.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+                accountServiceImp.save(account);
+
+                model.addAttribute("successMessage", "Пароль успешно обновлен.");
+            } else {
+                model.addAttribute("passwordError", "Неверный текущий пароль");
+            }
+        } else {
+            model.addAttribute("passwordError", "Пользователь не найден");
+        }
+        return "profile/user";
+    }
 }
