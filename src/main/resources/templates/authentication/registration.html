@@ -20,7 +20,6 @@
     <label for="email" class="input-prefix input-prefix--auth auth__input">
         <input type="email" id="email" name="email" class="input-prefix__input" placeholder="Email" required="">
     </label>
-
     <div th:if="${#fields.hasErrors('password')}" class="alert alert-danger" th:errors="*{password}"></div>
     <label for="password" class="input-prefix input-prefix--auth auth__input">
         <input type="password" id="password" name="password" class="input-prefix__input" placeholder="Password" required="">

@@ -28,7 +28,6 @@ public class B2StorageService {
             client = B2StorageClientFactory
                     .createDefaultFactory()
                     .create(applicationKeyId, applicationKey, "Messenger/1.0");
-            System.out.println("B2StorageService initialized successfully.");
         } catch (Exception e) {
             System.out.println("Failed to initialize B2StorageService: " + e.getMessage());
             e.printStackTrace();

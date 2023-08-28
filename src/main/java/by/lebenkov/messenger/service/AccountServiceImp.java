@@ -5,6 +5,8 @@ import by.lebenkov.messenger.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AccountServiceImp implements AccountService {
     private final AccountRepository accountRepository;
@@ -17,5 +19,10 @@ public class AccountServiceImp implements AccountService {
     @Override
     public void save(Account account) {
         accountRepository.save(account);
+    }
+
+    @Override
+    public Optional<Account> findByUsername(String username) {
+        return accountRepository.findByUsername(username);
     }
 }

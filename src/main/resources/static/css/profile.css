@@ -144,6 +144,7 @@ hr {
 .pr-image {
     width: 180px;
     height: 180px;
+    border-radius: 50%;
 }
 
 /* Стили для стрелочки на изображении */

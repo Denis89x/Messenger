@@ -43,20 +43,24 @@
 					<input type="file" name="file" accept="image/*" id="file-input" onchange="uploadPicture()">
 				</form>
 			</div>
-			<!--<div>
+			<div>
 				<p th:text="'Username: ' + ${account.getUsername()}" class="username-text">Username</p>
 				<button class="okay-btn" onclick="toggleUsernameForm()">Change username</button>
-				<div class="alert alert-danger" th:if="${usernameError}" id="validationForm">
+<!--				<div class="alert alert-danger" th:if="${#fields.hasErrors('newUsername')}" id="validationForm">
+					<p th:each="error : ${#fields.errors('newUsername')}" th:text="${error}" class="error-text"></p>
+				</div>-->
+
+				<div class="alert alert-danger" th:if="${usernameError}" id="usernameError">
 					<p th:text="${usernameError}"></p>
 				</div>
-				<form th:action="@{/profile/change-username}" method="post" id="usernameForm" class="form-profile">
+				<form th:action="@{/profile/change-username}" method="post" th:object="${changeUsernameDTO}" id="usernameForm" class="form-profile">
 					<label for="newUsernameInput" class="pr-newu">New Username:</label>
 					<input type="text" id="newUsernameInput" name="newUsername" placeholder="Enter new username" class="pr-input">
 					<button type="submit" class="okay-btn pr-confirm" id="confirmButton">Confirm</button>
 					<hr class="pr-hr">
 				</form>
 			</div>
-			<div>
+			<!--<div>
 				<button class="okay-btn" onclick="togglePasswordForm()">Change the password</button>
 				<div class="alert alert-danger" th:if="${passwordError}">
 					<p th:text="${passwordError}"></p>
