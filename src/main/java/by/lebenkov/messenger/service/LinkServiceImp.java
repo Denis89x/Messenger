@@ -1,6 +1,5 @@
 package by.lebenkov.messenger.service;
 
-import by.lebenkov.messenger.repository.AccountRepository;
 import com.backblaze.b2.client.B2StorageClient;
 import com.backblaze.b2.client.contentSources.B2ContentSource;
 import com.backblaze.b2.client.contentSources.B2ContentTypes;
@@ -17,16 +16,13 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Service
-public class PictureServiceImp implements PictureService {
+public class LinkServiceImp implements LinkService {
 
     private final B2StorageService b2StorageService;
 
-    private final AccountRepository accountRepository;
-
     @Autowired
-    public PictureServiceImp(B2StorageService b2StorageService, AccountRepository accountRepository) {
+    public LinkServiceImp(B2StorageService b2StorageService) {
         this.b2StorageService = b2StorageService;
-        this.accountRepository = accountRepository;
     }
 
     @Override

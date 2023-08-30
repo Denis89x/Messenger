@@ -81,7 +81,7 @@
 					<hr class="pr-hr">
 				</form>
 			</div>
-			<!--<div>
+			<div>
 				<p th:text="${maskedEmail}" class="username-text"></p>
 				<button class="okay-btn" onclick="toggleEmailForm()">Change email</button>
 				<div class="alert alert-danger" th:if="${emailError}" id="validationEmailForm">
@@ -134,7 +134,7 @@
 			</div>
 			<form th:action="@{/logout}" th:method="POST" onsubmit="return confirm('Are you sure you want to log out?');">
 				<button type="submit" class="okay-btn">Logout</button>
-			</form> -->
+			</form>
 		</div>
 	</div>
 </main>

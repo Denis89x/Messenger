@@ -27,11 +27,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 	implementation 'com.backblaze.b2:b2-sdk-core:6.1.1'
 	implementation 'com.backblaze.b2:b2-sdk-httpclient:6.1.1'
 	implementation 'com.backblaze.b2:b2-sdk-samples:6.1.1'
-
 	implementation 'com.google.api:gax:1.63.0'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'

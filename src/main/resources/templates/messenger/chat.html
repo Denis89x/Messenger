@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat with th:text="${receiver}"></title>
+  <link rel="stylesheet" href="/css/menu.css">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+<body>
+<h1>Chat with <span th:text="${receiver}"></span></h1>
+
+<div>
+  <ul>
+    <li th:each="message : ${messages}">
+      <p>
+        <span th:text="${message.sender.username}"></span>:
+        <span th:text="${message.content}"></span>
+      </p>
+    </li>
+  </ul>
+</div>
+
+<form th:action="@{'/messenger/' + ${receiver}}" method="post">
+  <input type="text" name="messageContent" placeholder="Enter your message">
+  <button type="submit">Send</button>
+</form>
+
+<a th:href="@{'/messenger'}">Back to users</a>
+</body>
+</html>
