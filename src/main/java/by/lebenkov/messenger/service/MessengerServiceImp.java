@@ -136,7 +136,7 @@ public class MessengerServiceImp implements MessengerService {
 
         // Convert the content to a link and save it to MinIO
 /*        String link = writeLinkService.writeLink(content, "message");*/
-
+        System.out.println("Content: " + content);
         Message message = new Message();
         message.setConversation(conversation);
         message.setSender(sender.getAccount()); // Assuming ConversationParticipant has a method to get the Account
@@ -261,7 +261,7 @@ public class MessengerServiceImp implements MessengerService {
                         try {
                             dialogUsernames.add(otherParticipant.getAccount());
                         } catch (Exception e) {
-                            // Обработка ошибок
+                            e.printStackTrace();
                         }
                     }
                 }

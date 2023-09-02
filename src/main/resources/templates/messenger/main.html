@@ -6,6 +6,7 @@
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 	<link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">
 	<link rel="stylesheet" href="/css/menu.css">
+	<link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 <div class="header">
@@ -19,13 +20,32 @@
 		<a href="/profile">
 			<img src="/images/settings.svg" alt="Settings" class="settings-image">
 		</a>
-		<a href="/messages/messages">
+		<a href="#">
 			<img src="/images/about.svg" alt="About" class="about-image">
 		</a>
 		<img th:if="${account.profilePicture}" th:src="${account.profilePicture}" alt="Profile Picture" class="exist-image"/>
 		<img th:unless="${account.profilePicture}" src="/images/avatar.svg" alt="Profile Picture" class="user-image"/>
 	</div>
 </div>
+<div class="message">
+	<div class="messages-block">
+		<form th:action="@{/messenger/start-dialog}" method="post" id="start-dialog-form">
+			<i class="fa fa-search search-icon"></i>
+			<input type="text" name="receiverUsername" placeholder="Search" class="search-input">
+		</form>
+		<div class="message-information">
+			<div th:each="username : ${dialogUsernames}">
+				<a th:href="@{'/messenger/' + ${username.getUsername()}}" class="message-button">
+					<img id="profile-picture" th:if="${username.getProfilePicture()}" th:src="${username.getProfilePicture}" alt="Profile Picture" class="message-pic"/>
+					<img th:unless="${username.getProfilePicture}" src="/images/person.jpg" alt="Profile Picture" class="message-pic"/>
+					<span th:text="${username.getUsername()}" class="message-name"></span>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="/scripts/messenger.js"></script>
 <script src="/scripts/menu.js"></script>
+<script src="https://kit.fontawesome.com/a1a44e76b4.js" crossorigin="anonymous"></script>
 </body>
 </html>

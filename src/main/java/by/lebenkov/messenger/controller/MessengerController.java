@@ -32,7 +32,7 @@ public class MessengerController {
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("dialogUsernames", dialogUsernames);
 
-        return "messenger/messages";
+        return "messenger/main";
     }
 
     @GetMapping("/{receiverUsername}")
