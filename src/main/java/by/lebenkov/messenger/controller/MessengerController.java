@@ -2,12 +2,15 @@ package by.lebenkov.messenger.controller;
 
 import by.lebenkov.messenger.model.Account;
 import by.lebenkov.messenger.model.Message;
+import by.lebenkov.messenger.model.MessageView;
+import by.lebenkov.messenger.service.AccountService;
 import by.lebenkov.messenger.service.MessengerServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,10 +19,12 @@ import java.util.Optional;
 public class MessengerController {
 
     private final MessengerServiceImp messengerServiceImp;
+    private final AccountService accountService;
 
     @Autowired
-    public MessengerController(MessengerServiceImp messengerService) {
+    public MessengerController(MessengerServiceImp messengerService, AccountService accountService) {
         this.messengerServiceImp = messengerService;
+        this.accountService = accountService;
     }
 
     @GetMapping("")
@@ -40,21 +45,28 @@ public class MessengerController {
         String currentUser = messengerServiceImp.getCurrentUserUsername();
 
         List<Message> messages = messengerServiceImp.getConversationMessages(currentUser, receiverUsername);
+        System.err.println("!!!" + Arrays.toString(messages.toArray()) + "!!!");
+        List<MessageView> list = messengerServiceImp.processMessages(messages);
+        System.err.println("###" + Arrays.toString(list.toArray()) + "###");
+        List<Account> dialogUsernames = messengerServiceImp.getDialogUsernames(currentUser);
 
+        Optional<Account> receiverOptional = accountService.findByUsername(receiverUsername);
+
+        Account receiver = receiverOptional.get();
         messengerServiceImp.getAccount(model);
 
         model.addAttribute("currentUser", currentUser);
-        model.addAttribute("receiver", receiverUsername);
-        model.addAttribute("messages", messages);
+        model.addAttribute("receiver", receiver);
+        model.addAttribute("messages", list);
+        model.addAttribute("dialogUsernames", dialogUsernames);
 
-        return "messenger/chat";
+        return "messenger/main";
     }
 
     @PostMapping("/{receiverUsername}")
     public String sendMessageToReceiver(@PathVariable String receiverUsername,
                                         @RequestParam("messageContent") String messageContent) {
-        String senderUsername = messengerServiceImp.getCurrentUserUsername();;
-
+        String senderUsername = messengerServiceImp.getCurrentUserUsername();
         messengerServiceImp.sendMessage(senderUsername, receiverUsername, messageContent);
 
         return "redirect:/messenger/{receiverUsername}";
@@ -71,7 +83,9 @@ public class MessengerController {
             return "redirect:/messenger";
         }
 
-        messengerServiceImp.sendMessage(senderUsername, receiverUsername, "New dialog started");
+/*        messengerServiceImp.findOrCreateConversation(senderUsername, receiverUsername);*/
+/*        messengerServiceImp.sendMessage(senderUsername, receiverUsername, "New dialog started");*/
+        messengerServiceImp.findParticipants(senderUsername, receiverUsername);
 
         return "redirect:/messenger/" + receiverUsername;
     }

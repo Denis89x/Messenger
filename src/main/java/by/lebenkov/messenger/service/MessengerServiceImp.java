@@ -107,9 +107,6 @@ public class MessengerServiceImp implements MessengerService {
                 receiverParticipant = receivers.get(0);
                 System.out.println("13");
             }
-//            if (!receivers.isEmpty()) {
-//                receiverParticipant = receivers.get(0);
-//            }
             System.out.println("14");
             commitMessage(senderParticipant, receiverParticipant, content);
         }
@@ -123,9 +120,64 @@ public class MessengerServiceImp implements MessengerService {
         }
     }
 
+    public void findParticipants(String senderUsername, String receiverUsername) {
+        List<ConversationParticipant> senderParticipants = conversationPartRepository.findAllByAccountUsername(senderUsername);
+        List<ConversationParticipant> receiverParticipants = conversationPartRepository.findAllByAccountUsername(receiverUsername);
+
+        List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
+
+        ConversationParticipant sender = null;
+        ConversationParticipant receiver = null;
+
+        if (!commonParticipants.isEmpty()) {
+            sender = commonParticipants.get(0);
+            receiver = commonParticipants.get(1);
+        }
+
+        Optional<Account> senderM = accountRepository.findByUsername(senderUsername);
+        Optional<Account> receiverM = accountRepository.findByUsername(receiverUsername);
+
+        if (senderM.isPresent() && receiverM.isPresent() && (sender == null && receiver == null)) {
+            List<ConversationParticipant> senders = conversationPartRepository.findAllByAccount(senderM.get());
+            List<ConversationParticipant> receivers = conversationPartRepository.findAllByAccount(receiverM.get());
+            ConversationParticipant senderParticipant;
+            if (senders.isEmpty()) {
+                senderParticipant = createParticipant(senderM.get());
+            } else {
+                senderParticipant = senders.get(0);
+            }
+            System.out.println("8");
+            ConversationParticipant receiverParticipant;
+            System.out.println("9");
+            if (receivers.isEmpty()) {
+                receiverParticipant = createParticipant(receiverM.get());
+            } else {
+                receiverParticipant = receivers.get(0);
+            }
+/*            commitMessage(senderParticipant, receiverParticipant, content);*/
+            Conversation conversation = findOrCreateConversation(senderParticipant, receiverParticipant);
+            System.out.println("Беседа найдена");
+        }
+
+        if (sender != null && receiver != null) {
+/*            commitMessage(sender, receiver, content);*/
+            Conversation conversation = findOrCreateConversation(sender, receiver);
+            System.out.println("Беседа найдена");
+
+        } else {
+            System.out.println("не найден.");
+        }
+    }
+
     @Override
     public Optional<Conversation> findByParticipants(List<ConversationParticipant> participants) {
         return conversationRepository.findByParticipantsIn(participants);
+    }
+
+    @Transactional
+    public void createConversation(ConversationParticipant sender, ConversationParticipant receiver) {
+        Conversation conversation = findOrCreateConversation(sender, receiver);
+
     }
 
     @Override
@@ -134,12 +186,10 @@ public class MessengerServiceImp implements MessengerService {
         Conversation conversation = findOrCreateConversation(sender, receiver);
         System.out.println("conversation1 " + conversation);
 
-        // Convert the content to a link and save it to MinIO
-/*        String link = writeLinkService.writeLink(content, "message");*/
         System.out.println("Content: " + content);
         Message message = new Message();
         message.setConversation(conversation);
-        message.setSender(sender.getAccount()); // Assuming ConversationParticipant has a method to get the Account
+        message.setSender(sender.getAccount());
         message.setContent(content);
         message.setDateTime(LocalDateTime.now());
         message.setIsChecked(false);
@@ -274,5 +324,23 @@ public class MessengerServiceImp implements MessengerService {
     @Override
     public Optional<Account> findAccountByUsername(String username) {
         return accountRepository.findByUsername(username);
+    }
+
+    public List<MessageView> processMessages(List<Message> messages) {
+        List<MessageView> messagesWithInfo = new ArrayList<>();
+        Account previousSender = null;
+
+        for (Message message : messages) {
+            MessageView messageInfo = new MessageView(message);
+
+            if (previousSender == null || !previousSender.equals(messageInfo.getMessage().getSender())) {
+                messageInfo.setDisplayProfile(true);
+                previousSender = message.getSender();
+            }
+
+            messagesWithInfo.add(messageInfo);
+        }
+
+        return messagesWithInfo;
     }
 }

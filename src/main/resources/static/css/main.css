@@ -1,5 +1,6 @@
 .message {
     margin-top: 56px;
+    display: flex;
 }
 
 .messages-block {
@@ -67,4 +68,10 @@
 
 .message-button {
     width: 280px;
+}
+
+.chat {
+    display: flex;
+    width: 700px;
+    align-items: center;
 }
