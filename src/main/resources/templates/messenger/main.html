@@ -23,7 +23,8 @@
 		<a href="#">
 			<img src="/images/about.svg" alt="About" class="about-image">
 		</a>
-		<img th:if="${account.profilePicture}" th:src="${account.profilePicture}" alt="Profile Picture" class="exist-image"/>
+		<img th:if="${account.profilePicture}"
+		     th:src="${account.profilePicture}" alt="Profile Picture" class="exist-image"/>
 		<img th:unless="${account.profilePicture}" src="/images/avatar.svg" alt="Profile Picture" class="user-image"/>
 	</div>
 </div>
@@ -36,7 +37,8 @@
 		<div class="message-information">
 			<div th:each="username : ${dialogUsernames}">
 				<a th:href="@{'/messenger/' + ${username.getUsername()}}" class="message-button">
-					<img id="profile-picture" th:if="${username.getProfilePicture()}" th:src="${username.getProfilePicture()}" alt="Profile Picture"/>
+					<img id="profile-picture" th:if="${username.getProfilePicture()}"
+					     th:src="${username.getProfilePicture()}" alt="Profile Picture"/>
 					<img th:unless="${username.getProfilePicture}" src="/images/person.jpg" alt="Profile Picture"/>
 					<span th:text="${username.getUsername()}" class="message-name"></span>
 				</a>
@@ -44,21 +46,28 @@
 		</div>
 	</div>
 	<div th:if="${receiver != null}" class="chat">
-		<div>
+		<div class="messages-container">
 			<ul>
 				<li th:each="message : ${messages}">
-					<span th:if="${message.isDisplayProfile() and !message.getMessage().getSender().getUsername().equalsIgnoreCase(currentUser)}" th:text="${message.getMessage().getSender().getUsername()} + ': '"></span>
+					<p th:if="${message.isDisplayProfile() and !message.getMessage().getSender().getUsername().equalsIgnoreCase(currentUser)}"
+					   th:text="${message.getMessage().getSender().getUsername()}" class="messenger-username"></p>
 					<div th:if="${message.isPicture() and !message.getMessage().getSender().getUsername().equalsIgnoreCase(currentUser)}">
-						<img th:if="${message.getMessage().getSender().getProfilePicture()}" th:src="${message.getMessage().getSender().getProfilePicture()}" alt="Profile Picture" class="message-pic"/>
-						<img th:unless="${message.getMessage().getSender().getProfilePicture()}" src="/images/person.jpg" alt="Profile Picture" class="message-pic"/>
+						<img th:if="${message.getMessage().getSender().getProfilePicture()}"
+						     th:src="${message.getMessage().getSender().getProfilePicture()}" alt="Profile Picture" class="message-pic"/>
+						<img th:unless="${message.getMessage().getSender().getProfilePicture()}"
+						     src="/images/person.jpg" alt="Profile Picture" class="message-pic"/>
+						<div class="user-message">
+							<p th:text="${message.getMessage().getContent()}"></p>
+						</div>
 					</div>
-					<div th:if="${message.isMyAccount()}"></div>
-					<p th:text="${message.getMessage().getContent()}"></p>
+					<div class="user-message-picture" th:unless="${message.isPicture() and !message.getMessage().getSender().getUsername().equalsIgnoreCase(currentUser)}">
+						<p th:text="${message.getMessage().getContent()}"></p>
+					</div>
 				</li>
 			</ul>
 		</div>
-		<form th:action="@{'/messenger/' + ${receiver.getUsername()}}" method="post">
-			<input type="text" name="messageContent" placeholder="Enter your message">
+		<form th:action="@{'/messenger/' + ${receiver.getUsername()}}" method="post" class="message-form">
+			<input type="text" name="messageContent" placeholder="Write a message...">
 			<button type="submit">Send</button>
 		</form>
 	</div>

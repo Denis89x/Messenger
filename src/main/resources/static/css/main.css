@@ -5,7 +5,7 @@
 
 .messages-block {
     width: 350px;
-    height: 100vh;
+    height: 93.5vh;
     display: flex;
     top: 0;
     left: 0;
@@ -66,18 +66,103 @@
     border-radius: 50%;
 }
 
+.message-pic {
+    height: 55px;
+    width: 55px;
+    border-radius: 50%;
+}
+
 .message-button {
     width: 280px;
 }
 
 .chat {
     display: flex;
-    width: 700px;
-    align-items: center;
+    width: 1250px;
+    flex-direction: column;
+    height: 75vh;
 }
 
-.message-pic {
-    height: 45px;
-    width: 45px;
-    border-radius: 50%;
+
+.messenger-username {
+    color: #1D9745;
+    padding-left: 4px;
+    font-weight: 600;
+    margin-bottom: 0;
+    margin-left: 61px;
+    margin-top: 7px;
+}
+
+.user-message-picture, .user-message {
+    background-color: #eeeeee;
+    padding: 10px;
+    border-radius: 15px 15px 15px 0;
+    margin: 5px;
+    display: inline-block;
+}
+
+.user-message-picture {
+    margin-left: 65px;
+}
+
+.user-message, .user-message-picture p {
+    margin: 0;
+}
+
+.user-message {
+    margin-left: 5px;
+}
+
+.messages-container {
+    overflow-y: auto;
+    flex-grow: 1; /* Расширяется, чтобы заполнить доступное пространство */
+    padding: 10px;
+    margin-left: 20px;
+}
+
+.messages-container ul {
+    list-style-type: none;
+}
+
+.message-form {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    right: 0;
+    padding: 10px;
+    display: flex;
+}
+
+.message-form input[type="text"] {
+    flex-grow: 1;
+    height: 40px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+.message-form button {
+    height: 40px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: #1D9745;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Добавьте этот стиль, чтобы скрывать вертикальную полосу прокрутки для контейнера сообщений, если она не нужна */
+.messages-container::-webkit-scrollbar {
+    width: 0.5em;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 5px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+    background-color: transparent;
 }
