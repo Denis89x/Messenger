@@ -330,10 +330,25 @@ public class MessengerServiceImp implements MessengerService {
         List<MessageView> messagesWithInfo = new ArrayList<>();
         Account previousSender = null;
 
-        for (Message message : messages) {
+        for (int i = 0; i < messages.size(); i++) {
+            Message message = messages.get(i);
             MessageView messageInfo = new MessageView(message);
 
-            if (previousSender == null || !previousSender.equals(messageInfo.getMessage().getSender())) {
+            if (message.getSender().equals(getAuthenticatedAccount()))
+                messageInfo.setMyAccount(true);
+
+            if (i < messages.size() - 1) {
+
+                Message nextMessage = messages.get(i + 1);
+
+                if (!message.getSender().equals(nextMessage.getSender())) {
+                    messageInfo.setPicture(true);
+                }
+            } else {
+                messageInfo.setPicture(true);
+            }
+
+            if (previousSender == null || !previousSender.equals(message.getSender())) {
                 messageInfo.setDisplayProfile(true);
                 previousSender = message.getSender();
             }

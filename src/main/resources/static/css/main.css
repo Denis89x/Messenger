@@ -75,3 +75,9 @@
     width: 700px;
     align-items: center;
 }
+
+.message-pic {
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+}

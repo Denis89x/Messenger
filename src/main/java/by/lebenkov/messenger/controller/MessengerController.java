@@ -45,9 +45,7 @@ public class MessengerController {
         String currentUser = messengerServiceImp.getCurrentUserUsername();
 
         List<Message> messages = messengerServiceImp.getConversationMessages(currentUser, receiverUsername);
-        System.err.println("!!!" + Arrays.toString(messages.toArray()) + "!!!");
         List<MessageView> list = messengerServiceImp.processMessages(messages);
-        System.err.println("###" + Arrays.toString(list.toArray()) + "###");
         List<Account> dialogUsernames = messengerServiceImp.getDialogUsernames(currentUser);
 
         Optional<Account> receiverOptional = accountService.findByUsername(receiverUsername);

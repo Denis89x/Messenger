@@ -10,6 +10,8 @@ import lombok.ToString;
 public class MessageView {
     private Message message;
     private boolean displayProfile;
+    private boolean picture;
+    private boolean myAccount;
 
     public MessageView(Message message) {
         this.message = message;
