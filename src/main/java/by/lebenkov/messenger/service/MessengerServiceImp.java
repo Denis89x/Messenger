@@ -54,7 +54,14 @@ public class MessengerServiceImp implements MessengerService {
         return accountRepository.findByUsername(username).orElse(null);
     }
 
-    @Override
+    public String findT() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<Account> account = accountRepository.findByUsername(username);
+        return account.get().getUsername();
+    }
+
+    /*@Override
     public void sendMessage(String senderUsername, String receiverUsername, String content) {
         List<ConversationParticipant> senderParticipants = conversationPartRepository.findAllByAccountUsername(senderUsername);
         List<ConversationParticipant> receiverParticipants = conversationPartRepository.findAllByAccountUsername(receiverUsername);
@@ -118,6 +125,49 @@ public class MessengerServiceImp implements MessengerService {
         } else {
             System.out.println("не найден 222");
         }
+    }*/
+
+    public Message sendMessage(String senderUsername, String receiverUsername, String content) {
+        List<ConversationParticipant> senderParticipants = conversationPartRepository.findAllByAccountUsername(senderUsername);
+        List<ConversationParticipant> receiverParticipants = conversationPartRepository.findAllByAccountUsername(receiverUsername);
+
+        List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
+
+        Message message = null;
+
+        ConversationParticipant sender = null;
+        ConversationParticipant receiver = null;
+
+        if (!commonParticipants.isEmpty()) {
+            sender = commonParticipants.get(0);
+            receiver = commonParticipants.get(1);
+        }
+
+        Optional<Account> senderM = accountRepository.findByUsername(senderUsername);
+        Optional<Account> receiverM = accountRepository.findByUsername(receiverUsername);
+
+        if (senderM.isPresent() && receiverM.isPresent() && (sender == null && receiver == null)) {
+            List<ConversationParticipant> senders = conversationPartRepository.findAllByAccount(senderM.get());
+            List<ConversationParticipant> receivers = conversationPartRepository.findAllByAccount(receiverM.get());
+            ConversationParticipant senderParticipant;
+            if (senders.isEmpty()) {
+                senderParticipant = createParticipant(senderM.get());
+            } else {
+                senderParticipant = senders.get(0);
+            }
+            ConversationParticipant receiverParticipant;
+            if (receivers.isEmpty()) {
+                receiverParticipant = createParticipant(receiverM.get());
+            } else {
+                receiverParticipant = receivers.get(0);
+            }
+            message = commitMessage(senderParticipant, receiverParticipant, content);
+        }
+
+        if (sender != null && receiver != null) {
+            message = commitMessage(sender, receiver, content);
+        }
+        return message;
     }
 
     public void findParticipants(String senderUsername, String receiverUsername) {
@@ -146,9 +196,7 @@ public class MessengerServiceImp implements MessengerService {
             } else {
                 senderParticipant = senders.get(0);
             }
-            System.out.println("8");
             ConversationParticipant receiverParticipant;
-            System.out.println("9");
             if (receivers.isEmpty()) {
                 receiverParticipant = createParticipant(receiverM.get());
             } else {
@@ -156,16 +204,11 @@ public class MessengerServiceImp implements MessengerService {
             }
 /*            commitMessage(senderParticipant, receiverParticipant, content);*/
             Conversation conversation = findOrCreateConversation(senderParticipant, receiverParticipant);
-            System.out.println("Беседа найдена");
         }
 
         if (sender != null && receiver != null) {
 /*            commitMessage(sender, receiver, content);*/
             Conversation conversation = findOrCreateConversation(sender, receiver);
-            System.out.println("Беседа найдена");
-
-        } else {
-            System.out.println("не найден.");
         }
     }
 
@@ -180,7 +223,7 @@ public class MessengerServiceImp implements MessengerService {
 
     }
 
-    @Override
+/*    @Override
     @Transactional
     public void commitMessage(ConversationParticipant sender, ConversationParticipant receiver, String content) {
         Conversation conversation = findOrCreateConversation(sender, receiver);
@@ -197,18 +240,31 @@ public class MessengerServiceImp implements MessengerService {
         System.out.println("перед message.save");
         messageRepository.save(message);
         System.out.println("после message.save");
+    }*/
+
+
+    @Transactional
+    public Message commitMessage(ConversationParticipant sender, ConversationParticipant receiver, String content) {
+        Conversation conversation = findOrCreateConversation(sender, receiver);
+
+        Message message = new Message();
+        message.setConversation(conversation);
+        message.setSender(sender.getAccount());
+        message.setContent(content);
+        message.setDateTime(LocalDateTime.now());
+        message.setIsChecked(false);
+
+        messageRepository.save(message);
+
+        return message;
     }
 
     @Override
     public List<Message> getConversationMessages(String senderUsername, String receiverUsername) {
         List<ConversationParticipant> senderParticipants = conversationPartRepository.findAllByAccountUsername(senderUsername);
         List<ConversationParticipant> receiverParticipants = conversationPartRepository.findAllByAccountUsername(receiverUsername);
-        System.out.println("senderParticipants = " + senderParticipants);
-        System.out.println("receiverParticipants = " + receiverParticipants);
 
         List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
-
-        System.out.println("#######" + commonParticipants);
 
         ConversationParticipant sender = commonParticipants.get(0);
         ConversationParticipant receiver = commonParticipants.get(1);
@@ -243,12 +299,10 @@ public class MessengerServiceImp implements MessengerService {
     @Transactional
     public Conversation findOrCreateConversation(ConversationParticipant sender, ConversationParticipant receiver) {
         if (sender.getConversation() == null && receiver.getConversation() == null) {
-            System.out.println("Мы тут не были");
             return conversationServiceImp.createConversationAndUpdateParticipants(sender, receiver);
         }
 
         if (Objects.equals(sender.getConversation(), receiver.getConversation())) {
-            System.out.println("Вернули беседу так-как нашли");
             return sender.getConversation();
         }
 
@@ -352,7 +406,6 @@ public class MessengerServiceImp implements MessengerService {
                 messageInfo.setDisplayProfile(true);
                 previousSender = message.getSender();
             }
-
             messagesWithInfo.add(messageInfo);
         }
 

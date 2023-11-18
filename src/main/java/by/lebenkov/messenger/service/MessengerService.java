@@ -12,9 +12,9 @@ import java.util.Optional;
 public interface MessengerService {
     void getAccount(Model model);
     Account getAuthenticatedAccount();
-    void sendMessage(String senderUsername, String receiverUsername, String content);
+    /*void sendMessage(String senderUsername, String receiverUsername, String content);*/
     Optional<Conversation> findByParticipants(List<ConversationParticipant> participants);
-    void commitMessage(ConversationParticipant sender, ConversationParticipant receiver, String content);
+    /*void commitMessage(ConversationParticipant sender, ConversationParticipant receiver, String content);*/
     List<Message> getConversationMessages(String senderUsername, String receiverUsername);
     ConversationParticipant createParticipant(Account account);
     Conversation findOrCreateConversation(ConversationParticipant sender, ConversationParticipant receiver);

@@ -3,10 +3,12 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Messenger</title>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
+	      integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 	<link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">
-	<link rel="stylesheet" href="/css/menu.css">
+	<!--	<link rel="stylesheet" href="/css/menu-line.css">-->
 	<link rel="stylesheet" href="/css/main.css">
+	<link rel="stylesheet" href="/css/menu-line.css">
 </head>
 <body>
 <div class="header">
@@ -47,33 +49,60 @@
 	</div>
 	<div th:if="${receiver != null}" class="chat">
 		<div class="messages-container">
-			<ul>
-				<li th:each="message : ${messages}">
-					<p th:if="${message.isDisplayProfile() and !message.getMessage().getSender().getUsername().equalsIgnoreCase(currentUser)}"
-					   th:text="${message.getMessage().getSender().getUsername()}" class="messenger-username"></p>
-					<div th:if="${message.isPicture() and !message.getMessage().getSender().getUsername().equalsIgnoreCase(currentUser)}">
-						<img th:if="${message.getMessage().getSender().getProfilePicture()}"
-						     th:src="${message.getMessage().getSender().getProfilePicture()}" alt="Profile Picture" class="message-pic"/>
-						<img th:unless="${message.getMessage().getSender().getProfilePicture()}"
-						     src="/images/person.jpg" alt="Profile Picture" class="message-pic"/>
-						<div class="user-message">
+			<th:block th:each="message : ${messages}">
+				<th:block th:if="${message.isMyAccount()}">
+					<div class="my-account">
+						<div class="user-message-o own-message">
 							<p th:text="${message.getMessage().getContent()}"></p>
 						</div>
 					</div>
-					<div class="user-message-picture" th:unless="${message.isPicture() and !message.getMessage().getSender().getUsername().equalsIgnoreCase(currentUser)}">
-						<p th:text="${message.getMessage().getContent()}"></p>
+				</th:block>
+				<th:block th:if="${!message.isMyAccount()}">
+					<div class="user-message-n">
+						<p th:if="${message.isDisplayProfile()}"
+						   th:text="${message.getMessage().getSender().getUsername()}" class="messenger-username"></p>
+						<div th:if="${message.isPicture()}">
+							<img th:if="${message.getMessage().getSender().getProfilePicture()}"
+							     th:src="${message.getMessage().getSender().getProfilePicture()}" alt="Profile Picture"
+							     class="message-pic"/>
+							<img th:unless="${message.getMessage().getSender().getProfilePicture()}"
+							     src="/images/person.jpg" alt="Profile Picture" class="message-pic"/>
+							<div class="user-message">
+								<p th:text="${message.getMessage().getContent()}"></p>
+							</div>
+						</div>
+						<div class="user-message-picture" th:if="${!message.isPicture()}">
+							<p th:text="${message.getMessage().getContent()}"></p>
+						</div>
 					</div>
-				</li>
-			</ul>
+				</th:block>
+			</th:block>
 		</div>
-		<form th:action="@{'/messenger/' + ${receiver.getUsername()}}" method="post" class="message-form">
-			<input type="text" name="messageContent" placeholder="Write a message...">
-			<button type="submit">Send</button>
+
+		<form class="message-form" onsubmit="return false;">
+			<input type="text" id="message-content-input" placeholder="Write a message...">
+			<input type="hidden" id="receiver-username" th:value="${receiver.getUsername()}">
+			<button type="submit" onclick="connectAndSendMessage()">Send</button>
 		</form>
 	</div>
 </div>
 <script src="/scripts/messenger.js"></script>
 <script src="/scripts/menu.js"></script>
+<script src="/webjars/sockjs-client/1.0.2/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
+<script src="/scripts/websocket-client.js"></script>
 <script src="https://kit.fontawesome.com/a1a44e76b4.js" crossorigin="anonymous"></script>
 </body>
 </html>
+<!--		<form th:action="@{'/messenger/' + ${receiver.getUsername()}}" method="post" class="message-form" onsubmit="send(); return false">
+			<input type="text" name="messageContent" placeholder="Write a message..." id="message-content-input">
+			<button type="submit">Send</button>
+		</form>-->
+<!--		<form th:action="@{'/messenger/' + ${receiver.getUsername()}}" method="post" class="message-form">
+			<input type="text" name="messageContent" placeholder="Write a message..." id="message-content-input">
+			<button type="submit">Send</button>
+		</form>-->
+<!--		<form id="message-form" class="message-form" th:action="@{'/messenger/' + ${receiver.getUsername()}}">
+			<input type="text" id="message-content-input" placeholder="Write a message...">
+			<button type="submit">Send</button>
+		</form>-->

@@ -25,22 +25,13 @@ public class ConversationServiceImp implements ConversationService {
     @Override
     @Transactional
     public Conversation createConversationAndUpdateParticipants(ConversationParticipant sender, ConversationParticipant receiver) {
-        System.out.println("Creating new conversation...");
         Conversation newConversation = new Conversation();
-        System.out.println("newConversation = " + newConversation);
         conversationRepository.save(newConversation);
-        System.out.println("Saved.");
 
         conversationRepository.updateParticipantConversation(sender.getId(), newConversation.getId());
-        System.out.println("After updating sender: " + sender);
-        System.out.println("After updating sender conversation: " + sender.getConversation());
 
         conversationRepository.updateParticipantConversation(receiver.getId(), newConversation.getId());
-        Optional<ConversationParticipant> newReceiver = conversationPartRepository.findById(receiver.getId());
-        System.out.println("new receiver = " + newReceiver);
-        System.out.println("After updating receiver conversation: " + receiver.getConversation());
 
-        System.out.println("New conversation created: " + newConversation.getId());
         return newConversation;
     }
 }

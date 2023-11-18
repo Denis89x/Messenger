@@ -24,7 +24,6 @@ public class CommonParticipantsServiceImp implements CommonParticipantsService {
         List<ConversationParticipant> receiverParticipants = conversationPartRepository.findAllByAccountUsername(receiverUsername);
 
         List<ConversationParticipant> commonParticipants = new ArrayList<>();
-        System.err.println("common first" + commonParticipants);
 
         for (ConversationParticipant senderParticipant : senderParticipants) {
             for (ConversationParticipant receiverParticipant : receiverParticipants) {
