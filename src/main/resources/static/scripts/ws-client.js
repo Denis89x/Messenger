@@ -3,7 +3,6 @@ const stompClient = new StompJs.Client({
 });
 
 stompClient.onConnect = (frame) => {
-    setConnected(true);
     console.log('Connected: ' + frame);
     stompClient.subscribe('/topic/chatroom', (message) => {
         showMessages(JSON.parse(message.body).content);
@@ -19,7 +18,39 @@ stompClient.onStompError = (frame) => {
     console.error('Additional details: ' + frame.body);
 };
 
-function setConnected(connected) {
+function connect() {
+    stompClient.activate();
+}
+
+function disconnect() {
+    stompClient.deactivate();
+    console.log("Disconnected");
+}
+
+function sendName() {
+    let receiverUsername = $("#receiver-username").data("username");
+    stompClient.publish({
+        destination: "/messenger/send-message/" + receiverUsername,
+        body: $("#message").val()
+    });
+}
+
+function showMessages(message) {
+    console.log('message: ' + message)
+
+    $(".own-message").append("<p>" + message + "</p>");
+}
+
+$(function () {
+    $("form").on('submit', (e) => e.preventDefault());
+    connect();
+    $("#disconnect").click(() => disconnect());
+    $("#send").click(() => sendName());
+});
+
+
+
+/*function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
     if (connected) {
@@ -29,32 +60,4 @@ function setConnected(connected) {
         $("#conversation").hide();
     }
     $("#messages").html("");
-}
-
-function connect() {
-    stompClient.activate();
-}
-
-function disconnect() {
-    stompClient.deactivate();
-    setConnected(false);
-    console.log("Disconnected");
-}
-
-function sendName() {
-    stompClient.publish({
-        destination: "/messenger/send-message/first",
-        body: $("#message").val()
-    });
-}
-
-function showMessages(message) {
-    $("#messages").append("<tr><td>" + message + "</td></tr>");
-}
-
-$(function () {
-    $("form").on('submit', (e) => e.preventDefault());
-    connect();
-    $( "#disconnect" ).click(() => disconnect());
-    $( "#send" ).click(() => sendName());
-});
+}*/

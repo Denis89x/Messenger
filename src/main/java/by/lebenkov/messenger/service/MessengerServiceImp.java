@@ -129,6 +129,7 @@ public class MessengerServiceImp implements MessengerService {
     @Transactional
     public void sendMessage(String senderUsername, String receiverUsername, String content) {
         List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
+        System.out.println("commonParticipants: " + commonParticipants);
 
         ConversationParticipant sender = null;
         ConversationParticipant receiver = null;
@@ -255,9 +256,6 @@ public class MessengerServiceImp implements MessengerService {
 
     @Override
     public List<Message> getConversationMessages(String senderUsername, String receiverUsername) {
-        List<ConversationParticipant> senderParticipants = conversationPartRepository.findAllByAccountUsername(senderUsername);
-        List<ConversationParticipant> receiverParticipants = conversationPartRepository.findAllByAccountUsername(receiverUsername);
-
         List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
 
         ConversationParticipant sender = commonParticipants.get(0);
@@ -296,10 +294,6 @@ public class MessengerServiceImp implements MessengerService {
             return conversationServiceImp.createConversationAndUpdateParticipants(sender, receiver);
         }
 
-        if (sender.getConversation().getId().equals(receiver.getConversation().getId())) {
-            return sender.getConversation();
-        }
-
         if (sender.getConversation() == null) {
             ConversationParticipant newReceiver = createParticipant(receiver.getAccount());
             return conversationServiceImp.createConversationAndUpdateParticipants(sender, newReceiver);
@@ -308,6 +302,10 @@ public class MessengerServiceImp implements MessengerService {
         if (receiver.getConversation() == null) {
             ConversationParticipant newSender = createParticipant(sender.getAccount());
             return conversationServiceImp.createConversationAndUpdateParticipants(newSender, receiver);
+        }
+
+        if (sender.getConversation().getId().equals(receiver.getConversation().getId())) {
+            return sender.getConversation();
         }
 
         if (!Objects.equals(sender.getConversation().getId(), receiver.getConversation().getId())) {
@@ -386,7 +384,6 @@ public class MessengerServiceImp implements MessengerService {
                 messageInfo.setMyAccount(true);
 
             if (i < messages.size() - 1) {
-
                 Message nextMessage = messages.get(i + 1);
 
                 if (!message.getSender().equals(nextMessage.getSender())) {

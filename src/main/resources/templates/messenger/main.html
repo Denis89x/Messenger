@@ -48,12 +48,13 @@
 		</div>
 	</div>
 	<div th:if="${receiver != null}" class="chat">
+		<div id="receiver-username" th:data-username="${receiver.getUsername()}"></div>
 		<div class="messages-container">
-<!--			<th:block th:each="message : ${messages}">
+			<th:block th:each="message : ${messages}" id="messages">
 				<th:block th:if="${message.isMyAccount()}">
 					<div class="my-account">
 						<div class="user-message-o own-message">
-							<p th:text="${message.getMessage().getContent()}"></p>
+							<p th:text="${message.getMessage().getContent()}" ></p>
 						</div>
 					</div>
 				</th:block>
@@ -74,36 +75,19 @@
 						<div class="user-message-picture" th:if="${!message.isPicture()}">
 							<p th:text="${message.getMessage().getContent()}"></p>
 						</div>
+
 					</div>
 				</th:block>
-			</th:block>-->
-			<label for="connect">WebSocket connection:</label>
+			</th:block>
+			<!--<label for="connect">WebSocket connection:</label>
 			<button id="connect" class="btn btn-default" type="submit">Connect</button>
-			<button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
-
-			<form class="form-inline">
-				<div class="form-group">
-					<label for="message">Message:</label>
-					<input type="text" id="message" class="form-control" placeholder="Your message here...">
-				</div>
-				<button id="send" class="btn btn-default" type="submit">Send</button>
-			</form>
-			<table id="conversation" class="table table-striped">
-				<thead>
-				<tr>
-					<th>Messages</th>
-				</tr>
-				</thead>
-				<tbody id="messages">
-				</tbody>
-			</table>
+			<button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>-->
 		</div>
 
-		<!--<form class="message-form" onsubmit="return false;">
-			<input type="text" id="message-content-input" placeholder="Write a message...">
-			<input type="hidden" id="receiver-username" th:value="${receiver.getUsername()}">
-			<button type="submit" onclick="connectAndSendMessage()">Send</button>
-		</form>-->
+		<form class="message-form">
+			<input type="text" id="message" class="form-control" placeholder="Your message here...">
+			<button id="send" class="btn btn-default" type="submit">Send</button>
+		</form>
 	</div>
 </div>
 <script src="/scripts/messenger.js"></script>
