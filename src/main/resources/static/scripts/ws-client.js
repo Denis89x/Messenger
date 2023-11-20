@@ -5,7 +5,7 @@ const stompClient = new StompJs.Client({
 stompClient.onConnect = (frame) => {
     console.log('Connected: ' + frame);
     stompClient.subscribe('/topic/chatroom', (message) => {
-        showMessages(JSON.parse(message.body).content);
+        showMessages(JSON.parse(message.body));
     });
 };
 
@@ -27,25 +27,38 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function sendName() {
+function sendMessage() {
     let receiverUsername = $("#receiver-username").data("username");
     stompClient.publish({
         destination: "/messenger/send-message/" + receiverUsername,
         body: $("#message").val()
     });
+    $(".message").val("");
 }
 
 function showMessages(message) {
-    console.log('message: ' + message)
+    let currentUsername = $("#current-username").data("username");
 
-    $(".own-message").append("<p>" + message + "</p>");
+    console.log('message: ' + message.content)
+    console.log('receiver: ' + message.receiverUsername)
+    console.log('sender: ' + message.senderUsername)
+
+    if (message.senderUsername === currentUsername) {
+        console.log("Вот такие пироги")
+        $("#messages").append("<div class='my-account'><div class='user-message-o own-message'><p>" + message.content + "</p></div></div>");
+    } else {
+        console.log("Не пироги")
+        $("#messages").append("<div class='user-message-n'><div class='user-message'><p>" + message.content + "</p></div></div>");
+    }
+
+/*    $(".own-message").append("<p>" + message.content + "</p>");*/
 }
 
 $(function () {
     $("form").on('submit', (e) => e.preventDefault());
     connect();
     $("#disconnect").click(() => disconnect());
-    $("#send").click(() => sendName());
+    $("#send").click(() => sendMessage());
 });
 
 

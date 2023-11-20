@@ -49,12 +49,13 @@
 	</div>
 	<div th:if="${receiver != null}" class="chat">
 		<div id="receiver-username" th:data-username="${receiver.getUsername()}"></div>
-		<div class="messages-container">
-			<th:block th:each="message : ${messages}" id="messages">
+		<div id="current-username" th:data-username="${currentUser.getUsername()}"></div>
+		<div class="messages-container" id="messages">
+			<th:block th:each="message : ${messages}">
 				<th:block th:if="${message.isMyAccount()}">
 					<div class="my-account">
 						<div class="user-message-o own-message">
-							<p th:text="${message.getMessage().getContent()}" ></p>
+							<p th:text="${message.getMessage().getContent()}"></p>
 						</div>
 					</div>
 				</th:block>
