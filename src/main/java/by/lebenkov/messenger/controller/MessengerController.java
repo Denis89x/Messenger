@@ -1,18 +1,18 @@
 package by.lebenkov.messenger.controller;
 
+import by.lebenkov.messenger.dto.MessageDTO;
 import by.lebenkov.messenger.model.Account;
 import by.lebenkov.messenger.model.Message;
 import by.lebenkov.messenger.model.MessageView;
 import by.lebenkov.messenger.service.AccountService;
 import by.lebenkov.messenger.service.MessengerServiceImp;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,27 +23,20 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/messenger")
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class MessengerController {
 
-    private final MessengerServiceImp messengerServiceImp;
-    private final AccountService accountService;
-    private final SimpMessagingTemplate messagingTemplate;
+    MessengerServiceImp messengerServiceImp;
+    AccountService accountService;
 
-    @Autowired
-    public MessengerController(MessengerServiceImp messengerService, AccountService accountService, SimpMessagingTemplate messagingTemplate) {
-        this.messengerServiceImp = messengerService;
-        this.accountService = accountService;
-        this.messagingTemplate = messagingTemplate;
-    }
-
-    @GetMapping("")
+    @GetMapping
     public String showMenu(Model model) {
         messengerServiceImp.getAccount(model);
 
-        Account currentUser = messengerServiceImp.getAuthenticatedAccount();
-        List<Account> dialogUsernames = messengerServiceImp.getDialogUsernames(currentUser.getUsername());
+        List<Account> dialogUsernames = messengerServiceImp.getDialogUsernames(messengerServiceImp.getAuthenticatedAccount().getUsername());
 
-        model.addAttribute("currentUser", currentUser.getUsername());
+        model.addAttribute("currentUser", messengerServiceImp.getAuthenticatedAccount().getUsername());
         model.addAttribute("dialogUsernames", dialogUsernames);
 
         return "messenger/main";
@@ -72,32 +65,20 @@ public class MessengerController {
     }
 
 /*    @MessageMapping("/{receiverUsername}")
-    @SendTo("/chat/{receiverUsername}")
-    public Message sendMessageToReceiver(@DestinationVariable String receiverUsername, @Payload String messageContent, Principal principal) {
-        System.out.println("1");
-*//*        String senderUsername = messengerServiceImp.getAuthenticatedAccount().getUsername();
-        String senderUsername = messengerServiceImp.getCurrentUserUsername();
-        String senderUsername = messengerServiceImp.findT();*//*
-        SecurityContextHolder.getContext().setAuthentication((Authentication) principal);
-        String senderUsername = messengerServiceImp.getCurrentUserUsername();
-        System.out.println("2");
-        return messengerServiceImp.sendMessage(senderUsername, receiverUsername, messageContent);
+    public void getMessages(@DestinationVariable String receiverUsername) {
+        Account currentUser = messengerServiceImp.getAuthenticatedAccount();
+        List<Message> messages = messengerServiceImp.getConversationMessages(currentUser.getUsername(), receiverUsername);
+        List<MessageView> messageViews = messengerServiceImp.processMessages(messages);
+
+        messagingTemplate.convertAndSend("/topic/chat/" + receiverUsername, messageViews);
     }*/
 
-    @MessageMapping("/sendMessage/{receiverUsername}")
-    @SendTo("/chat/{receiverUsername}")
-    public Message send(@DestinationVariable String receiver, @Payload String messageContent) {
-        String sender = messengerServiceImp.getAuthenticatedAccount().getUsername();
-        return messengerServiceImp.sendMessage(sender, receiver, messageContent);
+    @MessageMapping("/send-message/{receiver}")
+    @SendTo("/topic/chatroom")
+    public MessageDTO send(@DestinationVariable String receiver, @Payload String messageContent, Principal principal) {
+        messengerServiceImp.sendMessage(principal.getName(), receiver, messageContent);
+        return new MessageDTO(principal.getName(), receiver, messageContent);
     }
-
-/*        @MessageMapping("/{receiverUsername}")
-        public void sendMessageToReceiver(@DestinationVariable String receiverUsername, @Payload String messageContent, Principal principal) {
-            String senderUsername = principal.getName();
-            Message message = messengerServiceImp.sendMessage(senderUsername, receiverUsername, messageContent);
-            messagingTemplate.convertAndSend("/chat/" + receiverUsername, message);
-        }*/
-
 
     @PostMapping("/start-dialog")
     public String startNewDialog(@RequestParam("receiverUsername") String receiverUsername) {

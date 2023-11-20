@@ -50,8 +50,7 @@ public class MessengerServiceImp implements MessengerService {
     @Override
     public Account getAuthenticatedAccount() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        return accountRepository.findByUsername(username).orElse(null);
+        return accountRepository.findByUsername(authentication.getName()).orElse(null);
     }
 
     public String findT() {
@@ -127,13 +126,9 @@ public class MessengerServiceImp implements MessengerService {
         }
     }*/
 
-    public Message sendMessage(String senderUsername, String receiverUsername, String content) {
-        List<ConversationParticipant> senderParticipants = conversationPartRepository.findAllByAccountUsername(senderUsername);
-        List<ConversationParticipant> receiverParticipants = conversationPartRepository.findAllByAccountUsername(receiverUsername);
-
+    @Transactional
+    public void sendMessage(String senderUsername, String receiverUsername, String content) {
         List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
-
-        Message message = null;
 
         ConversationParticipant sender = null;
         ConversationParticipant receiver = null;
@@ -161,13 +156,12 @@ public class MessengerServiceImp implements MessengerService {
             } else {
                 receiverParticipant = receivers.get(0);
             }
-            message = commitMessage(senderParticipant, receiverParticipant, content);
+            commitMessage(senderParticipant, receiverParticipant, content);
         }
 
         if (sender != null && receiver != null) {
-            message = commitMessage(sender, receiver, content);
+            commitMessage(sender, receiver, content);
         }
-        return message;
     }
 
     public void findParticipants(String senderUsername, String receiverUsername) {
@@ -244,7 +238,7 @@ public class MessengerServiceImp implements MessengerService {
 
 
     @Transactional
-    public Message commitMessage(ConversationParticipant sender, ConversationParticipant receiver, String content) {
+    public void commitMessage(ConversationParticipant sender, ConversationParticipant receiver, String content) {
         Conversation conversation = findOrCreateConversation(sender, receiver);
 
         Message message = new Message();
@@ -256,7 +250,7 @@ public class MessengerServiceImp implements MessengerService {
 
         messageRepository.save(message);
 
-        return message;
+/*        return message;*/
     }
 
     @Override
@@ -302,7 +296,7 @@ public class MessengerServiceImp implements MessengerService {
             return conversationServiceImp.createConversationAndUpdateParticipants(sender, receiver);
         }
 
-        if (Objects.equals(sender.getConversation(), receiver.getConversation())) {
+        if (sender.getConversation().getId().equals(receiver.getConversation().getId())) {
             return sender.getConversation();
         }
 
@@ -316,7 +310,7 @@ public class MessengerServiceImp implements MessengerService {
             return conversationServiceImp.createConversationAndUpdateParticipants(newSender, receiver);
         }
 
-        if (!Objects.equals(sender.getConversation(), receiver.getConversation())) {
+        if (!Objects.equals(sender.getConversation().getId(), receiver.getConversation().getId())) {
             ConversationParticipant newSender = createParticipant(sender.getAccount());
             ConversationParticipant newReceiver = createParticipant(receiver.getAccount());
             return conversationServiceImp.createConversationAndUpdateParticipants(newSender, newReceiver);

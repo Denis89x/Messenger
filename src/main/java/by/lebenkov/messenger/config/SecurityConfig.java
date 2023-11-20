@@ -22,14 +22,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                //.antMatchers("/send/text/list").hasRole("ADMIN")
-                //.antMatchers("/send/text/user/*").hasRole("ADMIN")
                 .antMatchers("/auth/login", "/auth/registration", "/error").permitAll()
+                .antMatchers("/chat/**").authenticated()
                 .anyRequest().hasAnyRole("USER", "ADMIN")
                 .and()
                 .formLogin().loginPage("/auth/login")
                 .loginProcessingUrl("/process_login")
-                .defaultSuccessUrl("/messenger", true) // change this
+                .defaultSuccessUrl("/messenger", true)
                 .failureUrl("/auth/login?error")
                 .and()
                 .logout()
