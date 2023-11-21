@@ -14,12 +14,10 @@ import java.util.Optional;
 public class ConversationServiceImp implements ConversationService {
 
     private final ConversationRepository conversationRepository;
-    private final ConversationPartRepository conversationPartRepository;
 
     @Autowired
-    public ConversationServiceImp(ConversationRepository conversationRepository, ConversationPartRepository conversationPartRepository) {
+    public ConversationServiceImp(ConversationRepository conversationRepository) {
         this.conversationRepository = conversationRepository;
-        this.conversationPartRepository = conversationPartRepository;
     }
 
     @Override

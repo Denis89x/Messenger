@@ -36,22 +36,57 @@ function sendMessage() {
     $(".message").val("");
 }
 
+let previousMessageSender = null;
+let receiverPicture = $("#receiver-picture").data("picture");
+
 function showMessages(message) {
     let currentUsername = $("#current-username").data("username");
+
+    if (receiverPicture === undefined)
+        receiverPicture = "/images/person.jpg";
 
     console.log('message: ' + message.content)
     console.log('receiver: ' + message.receiverUsername)
     console.log('sender: ' + message.senderUsername)
+    console.log('picture: ' + receiverPicture)
 
     if (message.senderUsername === currentUsername) {
         console.log("Вот такие пироги")
-        $("#messages").append("<div class='my-account'><div class='user-message-o own-message'><p>" + message.content + "</p></div></div>");
+        $("#messages").append("" +
+            "<div class='my-account'>" +
+            "<div class='user-message-o own-message'>" +
+            "<p>" + message.content + "</p>" +
+            "</div>" +
+            "</div>");
+        previousMessageSender = null;
     } else {
         console.log("Не пироги")
-        $("#messages").append("<div class='user-message-n'><div class='user-message'><p>" + message.content + "</p></div></div>");
-    }
 
-/*    $(".own-message").append("<p>" + message.content + "</p>");*/
+        if (previousMessageSender === message.senderUsername) {
+            $("#messages").append(
+                "<div class='user-message-n'>" +
+                "<div>" +
+                "<img src='" + receiverPicture + "' alt='Profile Picture' class='message-pic'/>" +
+                "<div class='user-message'" +
+                "<p>" + message.content + "</p>" +
+                "</div>" +
+                "</div>" +
+                "</div>");
+        } else {
+            $("#messages").append(
+                "<div class='user-message-n'>" +
+                "<p class='messenger-username'>" + message.senderUsername + "</p>" +
+                "<div>" +
+                "<img src='" + receiverPicture + "' alt='Profile Picture' class='message-pic'/>" +
+                "<div class='user-message'>" +
+                "<p>" + message.content + "</p>" +
+                "</div>" +
+                "</div>" +
+                "</div>");
+        }
+
+        previousMessageSender = message.senderUsername;
+    }
 }
 
 $(function () {
@@ -60,8 +95,6 @@ $(function () {
     $("#disconnect").click(() => disconnect());
     $("#send").click(() => sendMessage());
 });
-
-
 
 /*function setConnected(connected) {
     $("#connect").prop("disabled", connected);

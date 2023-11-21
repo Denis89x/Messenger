@@ -6,7 +6,6 @@
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
 	      integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 	<link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">
-	<!--	<link rel="stylesheet" href="/css/menu-line.css">-->
 	<link rel="stylesheet" href="/css/main.css">
 	<link rel="stylesheet" href="/css/menu-line.css">
 </head>
@@ -50,6 +49,7 @@
 	<div th:if="${receiver != null}" class="chat">
 		<div id="receiver-username" th:data-username="${receiver.getUsername()}"></div>
 		<div id="current-username" th:data-username="${currentUser.getUsername()}"></div>
+		<div id="receiver-picture" th:data-picture="${receiver.getProfilePicture()}"></div>
 		<div class="messages-container" id="messages">
 			<th:block th:each="message : ${messages}">
 				<th:block th:if="${message.isMyAccount()}">
@@ -76,13 +76,9 @@
 						<div class="user-message-picture" th:if="${!message.isPicture()}">
 							<p th:text="${message.getMessage().getContent()}"></p>
 						</div>
-
 					</div>
 				</th:block>
 			</th:block>
-			<!--<label for="connect">WebSocket connection:</label>
-			<button id="connect" class="btn btn-default" type="submit">Connect</button>
-			<button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>-->
 		</div>
 
 		<form class="message-form">
@@ -99,15 +95,3 @@
 <script src="https://kit.fontawesome.com/a1a44e76b4.js" crossorigin="anonymous"></script>
 </body>
 </html>
-<!--		<form th:action="@{'/messenger/' + ${receiver.getUsername()}}" method="post" class="message-form" onsubmit="send(); return false">
-			<input type="text" name="messageContent" placeholder="Write a message..." id="message-content-input">
-			<button type="submit">Send</button>
-		</form>-->
-<!--		<form th:action="@{'/messenger/' + ${receiver.getUsername()}}" method="post" class="message-form">
-			<input type="text" name="messageContent" placeholder="Write a message..." id="message-content-input">
-			<button type="submit">Send</button>
-		</form>-->
-<!--		<form id="message-form" class="message-form" th:action="@{'/messenger/' + ${receiver.getUsername()}}">
-			<input type="text" id="message-content-input" placeholder="Write a message...">
-			<button type="submit">Send</button>
-		</form>-->

@@ -129,7 +129,6 @@ public class MessengerServiceImp implements MessengerService {
     @Transactional
     public void sendMessage(String senderUsername, String receiverUsername, String content) {
         List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
-        System.out.println("commonParticipants: " + commonParticipants);
 
         ConversationParticipant sender = null;
         ConversationParticipant receiver = null;

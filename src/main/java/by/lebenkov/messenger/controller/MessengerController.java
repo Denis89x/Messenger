@@ -64,15 +64,6 @@ public class MessengerController {
         return "messenger/main";
     }
 
-/*    @MessageMapping("/{receiverUsername}")
-    public void getMessages(@DestinationVariable String receiverUsername) {
-        Account currentUser = messengerServiceImp.getAuthenticatedAccount();
-        List<Message> messages = messengerServiceImp.getConversationMessages(currentUser.getUsername(), receiverUsername);
-        List<MessageView> messageViews = messengerServiceImp.processMessages(messages);
-
-        messagingTemplate.convertAndSend("/topic/chat/" + receiverUsername, messageViews);
-    }*/
-
     @MessageMapping("/send-message/{receiver}")
     @SendTo("/topic/chatroom")
     public MessageDTO send(@DestinationVariable String receiver, @Payload String messageContent, Principal principal) {
