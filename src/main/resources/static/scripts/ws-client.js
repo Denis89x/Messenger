@@ -37,6 +37,7 @@ function sendMessage() {
 }
 
 let previousMessageSender = null;
+let streak = 0;
 let receiverPicture = $("#receiver-picture").data("picture");
 
 function showMessages(message) {
@@ -51,7 +52,6 @@ function showMessages(message) {
     console.log('picture: ' + receiverPicture)
 
     if (message.senderUsername === currentUsername) {
-        console.log("Вот такие пироги")
         $("#messages").append("" +
             "<div class='my-account'>" +
             "<div class='user-message-o own-message'>" +
@@ -59,22 +59,49 @@ function showMessages(message) {
             "</div>" +
             "</div>");
         previousMessageSender = null;
+        streak = 0;
     } else {
-        console.log("Не пироги")
-
         if (previousMessageSender === message.senderUsername) {
+            if (streak === 0) {
+                console.log('Нашли зироу');
+                let elementToModify = $(".user-message-n[data-streak='" + streak + "']");
+                let textFromParagraph = elementToModify.find('.user-message p').text();
+                console.log("streak: " + streak + ", contentFounded: " + textFromParagraph)
+                elementToModify.html(
+                    "<p class='messenger-username'>" + message.senderUsername + "</p>" +
+                    "<div class='user-message-picture'>" +
+                    "<p>" + textFromParagraph +
+                    "</p>" +
+                    "</div>"
+                );
+            } else {
+                console.log('не нашли зироу: ' + streak);
+                let elementToModify = $(".user-message-n[data-streak='" + streak + "']");
+                let textFromParagraph = elementToModify.find('.user-message p').text();
+                console.log("streak: " + streak + ", contentFounded: " + textFromParagraph)
+                elementToModify.html(
+                    "<div class='user-message-picture'>" +
+                    "<p>" + textFromParagraph + "</p>" +
+                    "</div>"
+                );
+            }
+
+            streak++;
+
             $("#messages").append(
-                "<div class='user-message-n'>" +
+                "<div class='user-message-n' data-streak='" + streak + "'>" +
                 "<div>" +
                 "<img src='" + receiverPicture + "' alt='Profile Picture' class='message-pic'/>" +
-                "<div class='user-message'" +
-                "<p>" + message.content + "</p>" +
+                " " +
+                "<div class='user-message'>" +
+                "<p>" + message.content +
+                "</p>" +
                 "</div>" +
                 "</div>" +
                 "</div>");
         } else {
             $("#messages").append(
-                "<div class='user-message-n'>" +
+                "<div class='user-message-n' data-streak='" + streak + "'>" +
                 "<p class='messenger-username'>" + message.senderUsername + "</p>" +
                 "<div>" +
                 "<img src='" + receiverPicture + "' alt='Profile Picture' class='message-pic'/>" +
@@ -84,7 +111,6 @@ function showMessages(message) {
                 "</div>" +
                 "</div>");
         }
-
         previousMessageSender = message.senderUsername;
     }
 }
