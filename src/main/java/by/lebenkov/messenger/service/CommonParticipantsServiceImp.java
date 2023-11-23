@@ -19,27 +19,6 @@ public class CommonParticipantsServiceImp implements CommonParticipantsService {
 
     ConversationPartRepository conversationPartRepository;
 
-/*    @Override
-    public List<ConversationParticipant> findCommonParticipants(String senderUsername, String receiverUsername) {
-        List<ConversationParticipant> senderParticipants = conversationPartRepository.findAllByAccountUsername(senderUsername);
-        List<ConversationParticipant> receiverParticipants = conversationPartRepository.findAllByAccountUsername(receiverUsername);
-
-        List<ConversationParticipant> commonParticipants = new ArrayList<>();
-
-        for (ConversationParticipant senderParticipant : senderParticipants) {
-            for (ConversationParticipant receiverParticipant : receiverParticipants) {
-                if (senderParticipant.getConversation() != null && receiverParticipant.getConversation() != null) {
-                    if (senderParticipant.getConversation().getId().equals(receiverParticipant.getConversation().getId())) {
-                        commonParticipants.add(senderParticipant);
-                        commonParticipants.add(receiverParticipant);
-                    }
-                }
-            }
-        }
-
-        return commonParticipants;
-    }*/
-
     @Override
     public List<ConversationParticipant> findCommonParticipants(String senderUsername, String receiverUsername) {
         List<ConversationParticipant> senderParticipants = conversationPartRepository.findAllByAccountUsername(senderUsername);
