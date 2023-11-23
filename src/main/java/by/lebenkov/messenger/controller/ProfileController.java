@@ -66,7 +66,7 @@ public class ProfileController {
     }
 
     @PostMapping("/upload-profile-picture")
-    public String uploadProfilePicture(@RequestParam("file") MultipartFile file, Model model) throws B2Exception {
+    public String uploadProfilePicture(@RequestParam("file") MultipartFile file, Model model) {
         messengerService.getAccount(model);
 
         if (file.isEmpty()) {

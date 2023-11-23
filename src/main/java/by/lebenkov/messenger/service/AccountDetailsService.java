@@ -3,7 +3,9 @@ package by.lebenkov.messenger.service;
 import by.lebenkov.messenger.model.Account;
 import by.lebenkov.messenger.repository.AccountRepository;
 import by.lebenkov.messenger.security.AccountDetails;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,14 +14,11 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AccountDetailsService implements UserDetailsService {
 
-    private final AccountRepository accountRepository;
-
-    @Autowired
-    public AccountDetailsService(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
+    AccountRepository accountRepository;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {

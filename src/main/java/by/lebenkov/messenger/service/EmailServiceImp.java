@@ -1,6 +1,11 @@
 package by.lebenkov.messenger.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import by.lebenkov.messenger.util.EmailSendingException;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -10,14 +15,12 @@ import javax.mail.internet.MimeMessage;
 import java.util.Random;
 
 @Service
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class EmailServiceImp implements EmailService {
 
-    private final JavaMailSender mailSender;
-
-    @Autowired
-    public EmailServiceImp(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
+    JavaMailSender mailSender;
+    static Logger logger = LoggerFactory.getLogger(EmailServiceImp.class);
 
     @Override
     public void sendVerificationCode(String email, String verificationCode) {
@@ -30,12 +33,11 @@ public class EmailServiceImp implements EmailService {
             helper.setFrom("pastebinp@mail.ru");
             helper.setSubject("Verification Code for Your Account");
             helper.setText("Your verification code is: " + verificationCode);
-            System.out.println("Письмо отправлено");
 
             mailSender.send(message);
         } catch (MessagingException e) {
-            System.err.println("Письмо не пришло");
-            e.printStackTrace();
+            logger.error("Ошибка при отправке письма на адрес: {}", email, e);
+            throw new EmailSendingException("Ошибка при отправке письма!", e);
         }
     }
 

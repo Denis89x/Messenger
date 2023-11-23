@@ -44,6 +44,6 @@ public class Account {
     @Column(name = "profile_picture")
     private String profilePicture;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ConversationParticipant> conversations = new ArrayList<>();
 }

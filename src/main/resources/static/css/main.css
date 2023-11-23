@@ -10,8 +10,29 @@
     top: 0;
     left: 0;
     background-color: #ffffff;
-    flex-direction: column; /* Добавлено */
-    align-items: center; /* Добавлено */
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-message-o {
+    display: flex;
+    align-items: flex-end;
+}
+
+li.user-message-n {
+    display: flex;
+    align-items: flex-start;
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+}
+
+li.user-message-n.active {
+    opacity: 1;
+}
+
+li.user-message-o {
+    display: flex;
+    align-items: flex-end;
 }
 
 .search-label {
@@ -83,17 +104,18 @@
     height: 75vh;
 }
 
-
 .messenger-username {
     color: #1D9745;
     padding-left: 4px;
     font-weight: 600;
     margin-bottom: 0;
-    margin-left: 61px;
+    margin-left: 65px;
     margin-top: 7px;
 }
 
-.user-message-picture, .user-message {
+.user-message-picture,
+.user-message,
+.own-message {
     background-color: #eeeeee;
     padding: 10px;
     border-radius: 15px 15px 15px 0;
@@ -105,7 +127,20 @@
     margin-left: 65px;
 }
 
-.user-message, .user-message-picture p {
+.my-account {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.own-message {
+    background-color: #b5c8fc;
+    border-radius: 15px 15px 0 15px;
+}
+
+.user-message p,
+.user-message-picture p,
+.own-message p {
     margin: 0;
 }
 
@@ -113,15 +148,22 @@
     margin-left: 5px;
 }
 
+.own-message.own-message-right {
+    background-color: #b7caff;
+    margin-left: auto;
+}
+
 .messages-container {
     overflow-y: auto;
-    flex-grow: 1; /* Расширяется, чтобы заполнить доступное пространство */
+    flex-grow: 1;
     padding: 10px;
     margin-left: 20px;
 }
 
 .messages-container ul {
     list-style-type: none;
+    display: flex;
+    flex-direction: column;
 }
 
 .message-form {
