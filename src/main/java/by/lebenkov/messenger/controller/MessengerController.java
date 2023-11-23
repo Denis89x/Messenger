@@ -4,7 +4,7 @@ import by.lebenkov.messenger.dto.MessageDTO;
 import by.lebenkov.messenger.model.Account;
 import by.lebenkov.messenger.model.Message;
 import by.lebenkov.messenger.model.MessageView;
-import by.lebenkov.messenger.service.AccountService;
+import by.lebenkov.messenger.service.AccountServiceImp;
 import by.lebenkov.messenger.service.MessengerServiceImp;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,21 +28,22 @@ import java.util.Optional;
 public class MessengerController {
 
     MessengerServiceImp messengerServiceImp;
-    AccountService accountService;
+    AccountServiceImp accountServiceImp;
+
+    private static final String MESSENGER_ENDPOINT = "/{receiverUsername}";
+    private static final String START_DIALOG = "/start-dialog";
 
     @GetMapping
     public String showMenu(Model model) {
         messengerServiceImp.getAccount(model);
 
-        List<Account> dialogUsernames = messengerServiceImp.getDialogUsernames(messengerServiceImp.getAuthenticatedAccount().getUsername());
-
         model.addAttribute("currentUser", messengerServiceImp.getAuthenticatedAccount().getUsername());
-        model.addAttribute("dialogUsernames", dialogUsernames);
+        model.addAttribute("dialogUsernames", messengerServiceImp.getDialogUsernames(messengerServiceImp.getAuthenticatedAccount().getUsername()));
 
         return "messenger/main";
     }
 
-    @GetMapping("/{receiverUsername}")
+    @GetMapping(MESSENGER_ENDPOINT)
     public String showMessageWithReceiver(@PathVariable String receiverUsername, Model model) {
         Account currentUser = messengerServiceImp.getAuthenticatedAccount();
 
@@ -51,7 +52,7 @@ public class MessengerController {
 
         List<Account> dialogUsernames = messengerServiceImp.getDialogUsernames(currentUser.getUsername());
 
-        Optional<Account> receiverOptional = accountService.findByUsername(receiverUsername);
+        Optional<Account> receiverOptional = accountServiceImp.findByUsername(receiverUsername);
 
         Account receiver = receiverOptional.get();
         messengerServiceImp.getAccount(model);
@@ -67,11 +68,11 @@ public class MessengerController {
     @MessageMapping("/send-message/{receiver}")
     @SendTo("/topic/chatroom")
     public MessageDTO send(@DestinationVariable String receiver, @Payload String messageContent, Principal principal) {
-        messengerServiceImp.sendMessage(principal.getName(), receiver, messageContent);
+        messengerServiceImp.commitMessageOrFindParticipants(principal.getName(), receiver, messageContent, "commit");
         return new MessageDTO(principal.getName(), receiver, messageContent);
     }
 
-    @PostMapping("/start-dialog")
+    @PostMapping(START_DIALOG)
     public String startNewDialog(@RequestParam("receiverUsername") String receiverUsername) {
         Account senderUsername = messengerServiceImp.getAuthenticatedAccount();
 
@@ -80,7 +81,7 @@ public class MessengerController {
             return "redirect:/messenger";
         }
 
-        messengerServiceImp.findParticipants(senderUsername.getUsername(), receiverUsername);
+        messengerServiceImp.commitMessageOrFindParticipants(senderUsername.getUsername(), receiverUsername, null, "find");
 
         return "redirect:/messenger/" + receiverUsername;
     }

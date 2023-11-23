@@ -2,19 +2,19 @@ package by.lebenkov.messenger.service;
 
 import by.lebenkov.messenger.model.Account;
 import by.lebenkov.messenger.repository.AccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class AccountServiceImp implements AccountService {
-    private final AccountRepository accountRepository;
 
-    @Autowired
-    public AccountServiceImp(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
+    AccountRepository accountRepository;
 
     @Override
     public void save(Account account) {

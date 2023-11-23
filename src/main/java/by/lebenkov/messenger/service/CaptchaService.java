@@ -42,15 +42,9 @@ public class CaptchaService implements ICaptchaService {
             }
             bufferedReader.close();
 
-            // Parse the JSON response
             JsonObject jsonObject = JsonParser.parseString(response.toString()).getAsJsonObject();
-            boolean success = jsonObject.get("success").getAsBoolean();
+            return jsonObject.get("success").getAsBoolean();
 
-            // Add intermediate results to view in the console or logs
-            System.out.println("reCaptcha response: " + response.toString());
-            System.out.println("reCaptcha success: " + success);
-
-            return success;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
