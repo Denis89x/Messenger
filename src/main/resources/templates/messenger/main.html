@@ -36,13 +36,20 @@
 			<input type="text" name="receiverUsername" id="enterUsername" placeholder="Search" class="search-input">
 		</form>
 		<div class="message-information">
-			<div th:each="username : ${dialogUsernames}">
-				<a th:href="@{'/messenger/' + ${username.getUsername()}}" class="message-button">
-					<img id="profile-picture" th:if="${username.getProfilePicture()}"
-					     th:src="${username.getProfilePicture()}" alt="Profile Picture"/>
-					<img th:unless="${username.getProfilePicture}" src="/images/person.jpg" alt="Profile Picture"/>
-					<span th:text="${username.getUsername()}" class="message-name"></span>
-				</a>
+			<div th:each="username, iterStat : ${dialogUsernames}">
+				<th:block th:if="${!lastMessage.get(iterStat.index).equals('null')}">
+					<a th:href="@{'/messenger/' + ${username.getUsername()}}" class="message-button">
+						<img id="profile-picture" th:if="${username.getProfilePicture()}"
+						     th:src="${username.getProfilePicture()}" alt="Profile Picture"/>
+						<img th:unless="${username.getProfilePicture}" src="/images/person.jpg"
+						     alt="Profile Picture"/>
+						<div class="profile-bio">
+							<span th:text="${username.getUsername()}" class="message-name"></span>
+							<span th:if="${iterStat != null}" th:text="${lastMessage.get(iterStat.index)}"
+							      class="profile-last-message"></span>
+						</div>
+					</a>
+				</th:block>
 			</div>
 		</div>
 	</div>
@@ -80,11 +87,44 @@
 				</th:block>
 			</th:block>
 		</div>
-
 		<form class="message-form">
-			<input type="text" id="message" class="form-control" placeholder="Your message here...">
-			<button id="send" class="btn btn-default" type="submit">Send</button>
+			<input type="text" id="message" class="form-control" placeholder="Write message...">
+			<div class="message-footer">
+				<img src="/images/microphone.svg" alt="microphone" class="message-microphone">
+				<img src="/images/staple.svg" alt="microphone" class="message-staple">
+				<button id="send" class="message-button-send" type="submit">Send</button>
+			</div>
 		</form>
+	</div>
+	<div class="receiver-information" th:if="${receiver != null}">
+		<div class="receiver-top">
+			<div class="receiver-header">
+				<img th:if="${receiver.getProfilePicture()}"
+				     th:src="${receiver.getProfilePicture()}" alt="Profile Picture"
+				     class="message-pic"/>
+				<img th:unless="${receiver.getProfilePicture()}"
+				     src="/images/person.jpg" alt="Profile Picture" class="message-pic"/>
+				<span th:text="${receiver.getUsername()}" class="message-name"></span>
+			</div>
+			<div class="receiver-button">
+				<a th:href="@{'/messenger/'}" >
+					<img src="/images/close.svg" alt="Close">
+				</a>
+			</div>
+		</div>
+		<hr>
+		<div class="receiver-body">
+			<span class="message-name">Username</span>
+			<span th:text="${'@' + receiver.getUsername()}"></span>
+			<span class="message-name">Bio</span>
+			<span>Here should be user bio</span>
+		</div>
+		<hr>
+		<div class="receiver-function">
+			<a href="#">Block user</a>
+			<a href="#">Clear history</a>
+			<a href="#">Delete conversation</a>
+		</div>
 	</div>
 </div>
 <script src="/scripts/messenger.js"></script>

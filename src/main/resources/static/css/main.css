@@ -1,6 +1,7 @@
 .message {
     margin-top: 56px;
     display: flex;
+    background-color: rgba(255, 255, 255, 0.8);
 }
 
 .messages-block {
@@ -12,6 +13,8 @@
     background-color: #ffffff;
     flex-direction: column;
     align-items: center;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 0 6px rgba(0, 0, 0, 0.1);
 }
 
 .user-message-o {
@@ -88,9 +91,10 @@ li.user-message-o {
 }
 
 .message-pic {
-    height: 55px;
-    width: 55px;
+    height: 35px;
+    width: 35px;
     border-radius: 50%;
+    margin-top: 3px;
 }
 
 .message-button {
@@ -109,14 +113,19 @@ li.user-message-o {
     padding-left: 4px;
     font-weight: 600;
     margin-bottom: 0;
-    margin-left: 65px;
+    margin-left: 42px;
     margin-top: 7px;
+}
+
+.user-message p,
+.own-message p {
+    opacity: 0.85;
 }
 
 .user-message-picture,
 .user-message,
 .own-message {
-    background-color: #eeeeee;
+    background-color: #eef1f4;
     padding: 10px;
     border-radius: 15px 15px 15px 0;
     margin: 5px;
@@ -124,7 +133,7 @@ li.user-message-o {
 }
 
 .user-message-picture {
-    margin-left: 65px;
+    margin-left: 44px;
 }
 
 .my-account {
@@ -134,7 +143,7 @@ li.user-message-o {
 }
 
 .own-message {
-    background-color: #b5c8fc;
+    background-color: #e8f2fe;
     border-radius: 15px 15px 0 15px;
 }
 
@@ -154,10 +163,13 @@ li.user-message-o {
 }
 
 .messages-container {
+    scrollbar-width: thin;  /* для Firefox */
+    scrollbar-color: transparent transparent;
     overflow-y: auto;
     flex-grow: 1;
     padding: 10px;
-    margin-left: 20px;
+    margin-left: 65px;
+    margin-right: 65px;
 }
 
 .messages-container ul {
@@ -171,32 +183,23 @@ li.user-message-o {
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    right: 0;
     padding: 10px;
     display: flex;
+    width: 720px;
+    height: 124px;
+    flex-direction: column;
 }
 
 .message-form input[type="text"] {
     flex-grow: 1;
-    height: 40px;
-    padding: 10px;
+    height: 64px;
+    padding: 10px 10px 10px 15px;
     border: 1px solid #ccc;
-    border-radius: 10px;
+    border-radius: 15px 15px 0 0;
     margin-right: 10px;
 }
 
-.message-form button {
-    height: 40px;
-    padding: 0 20px;
-    border: none;
-    border-radius: 10px;
-    background-color: #1D9745;
-    color: #fff;
-    cursor: pointer;
-}
-
-/* Добавьте этот стиль, чтобы скрывать вертикальную полосу прокрутки для контейнера сообщений, если она не нужна */
-.messages-container::-webkit-scrollbar {
+/*.messages-container::-webkit-scrollbar {
     width: 0.5em;
 }
 
@@ -207,4 +210,97 @@ li.user-message-o {
 
 .messages-container::-webkit-scrollbar-track {
     background-color: transparent;
+}*/
+
+.profile-bio {
+    display: flex;
+    flex-direction: column;
+}
+
+.message-name {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.profile-last-message {
+    opacity: 0.7;
+}
+
+.message-footer {
+    display: flex;
+    height: 64px;
+    background-color: #f8f9fa;
+    border-radius: 0 0 15px 15px;
+    border: 1px solid #ccc;
+    border-top: none rgb(204, 204, 204);
+    align-items: center;
+    gap: 28px;
+}
+
+.message-microphone {
+    height: 22px;
+    width: 16px;
+    margin-left: 20px;
+}
+
+.message-staple {
+    height: 21px;
+    width: 18px;
+}
+
+.message-button-send {
+    background: transparent;
+    color: #a0a0a0;
+    font-weight: 600;
+    border: 1px solid #ccc;
+    padding: 5px 12px 5px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    height: 36px;
+    margin-left: 515px;
+}
+
+.receiver-information {
+    width: 320px;
+    height: 93.5vh;
+    display: flex;
+    top: 0;
+    background-color: #ffffff;
+    flex-direction: column;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    border-radius: 15px 0 0 0;
+    padding-left: 27px;
+}
+
+.receiver-header {
+    display: flex;
+    gap: 18px;
+    margin-top: 12px;
+    align-items: center;
+    width: 251px;
+}
+
+.receiver-button {
+    display: flex;
+    align-items: center;
+    padding-top: 6px;
+}
+
+.receiver-information hr {
+    height: 1px;
+    width: 265px;
+    margin-left: 0;
+    margin-top: 20px;
+}
+
+.receiver-function,
+.receiver-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.receiver-top {
+    display: flex;
 }

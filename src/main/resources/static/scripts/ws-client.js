@@ -33,7 +33,7 @@ function sendMessage() {
         destination: "/messenger/send-message/" + receiverUsername,
         body: $("#message").val()
     });
-    $(".message").val("");
+    $("#message").val("");
 }
 
 let previousMessageSender = null;
@@ -45,11 +45,6 @@ function showMessages(message) {
 
     if (receiverPicture === undefined)
         receiverPicture = "/images/person.jpg";
-
-    console.log('message: ' + message.content)
-    console.log('receiver: ' + message.receiverUsername)
-    console.log('sender: ' + message.senderUsername)
-    console.log('picture: ' + receiverPicture)
 
     if (message.senderUsername === currentUsername) {
         $("#messages").append("" +
