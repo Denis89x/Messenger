@@ -199,19 +199,6 @@ li.user-message-o {
     margin-right: 10px;
 }
 
-/*.messages-container::-webkit-scrollbar {
-    width: 0.5em;
-}
-
-.messages-container::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-    border-radius: 5px;
-}
-
-.messages-container::-webkit-scrollbar-track {
-    background-color: transparent;
-}*/
-
 .profile-bio {
     display: flex;
     flex-direction: column;
