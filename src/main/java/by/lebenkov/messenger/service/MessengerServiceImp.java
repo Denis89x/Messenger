@@ -140,6 +140,59 @@ public class MessengerServiceImp implements MessengerService {
         return Collections.emptyList();
     }
 
+    public String getLastMessage(String senderUsername, String receiverUsername) {
+        List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
+
+        ConversationParticipant sender = commonParticipants.get(0);
+        ConversationParticipant receiver = commonParticipants.get(1);
+
+        if (sender != null && receiver != null) {
+            List<ConversationParticipant> participants = new ArrayList<>();
+            participants.add(sender);
+            participants.add(receiver);
+
+            Optional<Conversation> conversation = findByParticipants(participants);
+
+            if (conversation.isPresent()) {
+                Message lastMessage = messageRepository.findFirstByConversationOrderByDateTimeDesc(conversation.get());
+                if (lastMessage == null)
+                    return "null";
+                return checkMessage(lastMessage);
+            }
+        }
+        return null;
+    }
+
+    private String checkMessage(Message message) {
+        if (message.getSender().getIdAccount() == getAuthenticatedAccount().getIdAccount()) {
+            if (message.getContent().length() > 12)
+                return "You: " + message.getContent().substring(0, 12) + "...";
+            return "You: " + message.getContent();
+        } else {
+            if (message.getContent().length() > 12)
+                return message.getContent().substring(0, 12) + "...";
+            return message.getContent();
+        }
+    }
+
+    public List<String> lastMessages(List<Account> dialogUsers) {
+        List<String> receiversUsername = new ArrayList<>();
+
+        for (Account acc : dialogUsers) {
+            receiversUsername.add(acc.getUsername());
+        }
+
+        List<String> lastMessages = new ArrayList<>();
+
+        for (String name : receiversUsername) {
+            lastMessages.add(getLastMessage(
+                    getAuthenticatedAccount().getUsername(),
+                    name));
+        }
+
+        return lastMessages;
+    }
+
     @Override
     public ConversationParticipant createParticipant(Account account) {
         ConversationParticipant participant = new ConversationParticipant();

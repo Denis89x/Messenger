@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,8 +38,11 @@ public class MessengerController {
     public String showMenu(Model model) {
         messengerServiceImp.getAccount(model);
 
+        List<Account> dialogUsers = messengerServiceImp.getDialogUsernames(messengerServiceImp.getAuthenticatedAccount().getUsername());
+
         model.addAttribute("currentUser", messengerServiceImp.getAuthenticatedAccount().getUsername());
-        model.addAttribute("dialogUsernames", messengerServiceImp.getDialogUsernames(messengerServiceImp.getAuthenticatedAccount().getUsername()));
+        model.addAttribute("dialogUsernames", dialogUsers);
+        model.addAttribute("lastMessage", messengerServiceImp.lastMessages(dialogUsers));
 
         return "messenger/main";
     }
@@ -50,7 +54,7 @@ public class MessengerController {
         List<Message> messages = messengerServiceImp.getConversationMessages(currentUser.getUsername(), receiverUsername);
         List<MessageView> list = messengerServiceImp.processMessages(messages);
 
-        List<Account> dialogUsernames = messengerServiceImp.getDialogUsernames(currentUser.getUsername());
+        List<Account> dialogUsers = messengerServiceImp.getDialogUsernames(currentUser.getUsername());
 
         Optional<Account> receiverOptional = accountServiceImp.findByUsername(receiverUsername);
 
@@ -60,7 +64,8 @@ public class MessengerController {
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("receiver", receiver);
         model.addAttribute("messages", list);
-        model.addAttribute("dialogUsernames", dialogUsernames);
+        model.addAttribute("dialogUsernames", dialogUsers);
+        model.addAttribute("lastMessage", messengerServiceImp.lastMessages(dialogUsers));
 
         return "messenger/main";
     }

@@ -2,14 +2,19 @@ package by.lebenkov.messenger.controller;
 
 import by.lebenkov.messenger.dto.ChangeEmailDTO;
 import by.lebenkov.messenger.dto.ChangePasswordDTO;
+import by.lebenkov.messenger.dto.ChangeUsernameDTO;
 import by.lebenkov.messenger.dto.VerificationCodeDTO;
 import by.lebenkov.messenger.model.Account;
-import by.lebenkov.messenger.service.*;
+import by.lebenkov.messenger.service.AccountServiceImp;
+import by.lebenkov.messenger.service.EmailServiceImp;
+import by.lebenkov.messenger.service.LinkServiceImp;
+import by.lebenkov.messenger.service.MessengerServiceImp;
 import by.lebenkov.messenger.util.ChangeEmailValidator;
 import by.lebenkov.messenger.util.ChangePasswordValidator;
 import by.lebenkov.messenger.util.ChangeUsernameValidator;
-import com.backblaze.b2.client.exceptions.B2Exception;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,9 +22,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import by.lebenkov.messenger.dto.ChangeUsernameDTO;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -28,29 +35,20 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/profile")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@AllArgsConstructor
 public class ProfileController {
 
-    private final MessengerServiceImp messengerService;
-    private final LinkServiceImp linkServiceImp;
-    private final ChangeUsernameValidator changeUsernameValidator;
-    private final ChangePasswordValidator changePasswordValidator;
-    private final ChangeEmailValidator changeEmailValidator;
-    private final EmailServiceImp emailServiceImp;
-    private final PasswordEncoder passwordEncoder;
-    private final AccountServiceImp accountServiceImp;
-    private final Map<Integer, VerificationCodeDTO> verificationCodesMap = new HashMap<>();
+    MessengerServiceImp messengerService;
+    LinkServiceImp linkServiceImp;
+    ChangeUsernameValidator changeUsernameValidator;
+    ChangePasswordValidator changePasswordValidator;
+    ChangeEmailValidator changeEmailValidator;
+    EmailServiceImp emailServiceImp;
+    PasswordEncoder passwordEncoder;
+    AccountServiceImp accountServiceImp;
 
-    @Autowired
-    public ProfileController(MessengerServiceImp messengerService, LinkServiceImp linkServiceImp, ChangeUsernameValidator changeUsernameValidator, ChangePasswordValidator changePasswordValidator, ChangeEmailValidator changeEmailValidator, EmailServiceImp emailServiceImp, PasswordEncoder passwordEncoder, AccountServiceImp accountServiceImp) {
-        this.messengerService = messengerService;
-        this.linkServiceImp = linkServiceImp;
-        this.changeUsernameValidator = changeUsernameValidator;
-        this.changePasswordValidator = changePasswordValidator;
-        this.changeEmailValidator = changeEmailValidator;
-        this.emailServiceImp = emailServiceImp;
-        this.passwordEncoder = passwordEncoder;
-        this.accountServiceImp = accountServiceImp;
-    }
+    private final Map<Integer, VerificationCodeDTO> verificationCodesMap = new HashMap<>();
 
     @GetMapping()
     public String showSettings(Model model) {
@@ -231,4 +229,14 @@ public class ProfileController {
         return "redirect:/profile";
     }
 
+    @PostMapping("/unlink-email")
+    public String unlinkEmail() {
+        accountServiceImp.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).
+                ifPresent(account -> {
+                    account.setIsVerifiedEmail(false);
+                    accountServiceImp.save(account);
+                });
+
+        return "redirect:/profile";
+    }
 }
