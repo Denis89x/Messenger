@@ -4,13 +4,16 @@ spring.datasource.username=
 spring.datasource.password=
 
 spring.jpa.properties.hibernate.dialect=
-spring.jpa.properties.hibernate.show_sql=
 
 google.recaptcha.key.site=
 google.recaptcha.key.secret=
 
 application.key.id=
 application.key=
+
+bucket.id=
+
+spring.servlet.multipart.max-file-size=10MB
 
 spring.mail.host=
 spring.mail.port=

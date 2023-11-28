@@ -291,3 +291,28 @@ li.user-message-o {
 .receiver-top {
     display: flex;
 }
+
+.message-date {
+    color: #616c76;
+    display: flex;
+    margin: -5px 5px 20px 44px;
+    font-size: 14px;
+}
+
+
+.message-day {
+    color: white;
+    font-weight: 600;
+}
+
+.day-centre {
+    display: flex;
+}
+
+.day-divider {
+    background-color: #8fa0af;
+    border-radius: 25px;
+    padding: 3px 10px 3px 10px;
+    display: inline-block;
+    margin: 20px auto;
+}

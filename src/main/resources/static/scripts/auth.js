@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    var registrationForm = document.getElementById("registrationForm");
+    let registrationForm = document.getElementById("registrationForm");
     registrationForm.addEventListener("submit", function(event) {
         event.preventDefault();
         grecaptcha.ready(function () {

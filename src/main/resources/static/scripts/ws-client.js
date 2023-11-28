@@ -34,6 +34,9 @@ function sendMessage() {
         body: $("#message").val()
     });
     $("#message").val("");
+
+    let messagesContainer = document.getElementById("messages");
+    smoothScrollTo(messagesContainer, messagesContainer.scrollHeight, 700);
 }
 
 let previousMessageSender = null;
