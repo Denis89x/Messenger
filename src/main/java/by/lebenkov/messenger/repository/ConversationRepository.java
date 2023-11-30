@@ -20,5 +20,4 @@ public interface ConversationRepository extends JpaRepository<Conversation, Inte
     @Query(value = "UPDATE conversation_participant SET conversation_id = :conversationId WHERE id_participant = :participantId",
             nativeQuery = true)
     void updateParticipantConversation(@Param("participantId") Integer participantId, @Param("conversationId") Integer conversationId);
-
 }

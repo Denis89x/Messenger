@@ -18,7 +18,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +50,7 @@ public class MessengerController {
     public String showMessageWithReceiver(@PathVariable String receiverUsername, Model model) {
         Account currentUser = messengerServiceImp.getAuthenticatedAccount();
 
+        System.out.println("Мы тута");
         List<Message> messages = messengerServiceImp.getConversationMessages(currentUser.getUsername(), receiverUsername);
         List<MessageView> list = messengerServiceImp.processMessages(messages);
 
@@ -75,6 +75,14 @@ public class MessengerController {
     public MessageDTO send(@DestinationVariable String receiver, @Payload String messageContent, Principal principal) {
         messengerServiceImp.commitMessageOrFindParticipants(principal.getName(), receiver, messageContent, "commit");
         return new MessageDTO(principal.getName(), receiver, messageContent);
+    }
+
+    @PostMapping("/clear-history/{receiver}")
+    public String clearDialogHistory(@PathVariable String receiver) {
+        messengerServiceImp.clearHistory(
+                messengerServiceImp.getAuthenticatedAccount().getUsername(),
+                receiver);
+        return "redirect:/messenger/" + receiver;
     }
 
     @PostMapping(START_DIALOG)

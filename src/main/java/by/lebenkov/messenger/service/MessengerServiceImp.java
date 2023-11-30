@@ -5,6 +5,7 @@ import by.lebenkov.messenger.repository.AccountRepository;
 import by.lebenkov.messenger.repository.ConversationPartRepository;
 import by.lebenkov.messenger.repository.ConversationRepository;
 import by.lebenkov.messenger.repository.MessageRepository;
+import by.lebenkov.messenger.util.ConversationNotFoundedException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -117,50 +118,16 @@ public class MessengerServiceImp implements MessengerService {
 
     @Override
     public List<Message> getConversationMessages(String senderUsername, String receiverUsername) {
-        List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
-
-        ConversationParticipant sender = commonParticipants.get(0);
-        ConversationParticipant receiver = commonParticipants.get(1);
-
-        if (sender != null && receiver != null) {
-            List<Message> messages = new ArrayList<>();
-
-            List<ConversationParticipant> participants = new ArrayList<>();
-            participants.add(sender);
-            participants.add(receiver);
-
-            Optional<Conversation> conversation = findByParticipants(participants);
-
-            if (conversation.isPresent()) {
-                messages = messageRepository.findByConversationOrderByDateTimeAsc(conversation.get());
-            }
-
-            return messages;
-        }
-        return Collections.emptyList();
+        return messageRepository.findByConversationOrderByDateTimeAsc(
+                findConversationByParticipants(senderUsername, receiverUsername).orElseThrow(() ->
+                        new ConversationNotFoundedException("Conversation not founded!")));
     }
 
     public String getLastMessage(String senderUsername, String receiverUsername) {
-        List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
-
-        ConversationParticipant sender = commonParticipants.get(0);
-        ConversationParticipant receiver = commonParticipants.get(1);
-
-        if (sender != null && receiver != null) {
-            List<ConversationParticipant> participants = new ArrayList<>();
-            participants.add(sender);
-            participants.add(receiver);
-
-            Optional<Conversation> conversation = findByParticipants(participants);
-
-            if (conversation.isPresent()) {
-                Message lastMessage = messageRepository.findFirstByConversationOrderByDateTimeDesc(conversation.get());
-                if (lastMessage == null)
-                    return "null";
-                return checkMessage(lastMessage);
-            }
-        }
-        return null;
+        return findConversationByParticipants(senderUsername, receiverUsername)
+                .flatMap(conversation -> Optional.ofNullable(messageRepository.findFirstByConversationOrderByDateTimeDesc(conversation)))
+                .map(this::checkMessage)
+                .orElse("null");
     }
 
     private String checkMessage(Message message) {
@@ -286,5 +253,30 @@ public class MessengerServiceImp implements MessengerService {
         }
 
         return messagesWithInfo;
+    }
+
+    private Optional<Conversation> findConversationByParticipants(String senderUsername, String receiverUsername) {
+        List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
+
+        ConversationParticipant sender = commonParticipants.get(0);
+        ConversationParticipant receiver = commonParticipants.get(1);
+
+        if (sender != null && receiver != null) {
+
+            List<ConversationParticipant> participants = new ArrayList<>();
+            participants.add(sender);
+            participants.add(receiver);
+
+            return findByParticipants(participants);
+        }
+
+        return Optional.empty();
+    }
+
+    @Transactional
+    public void clearHistory(String sender, String receiver) {
+        if (sender != null && receiver != null)
+            messageRepository.deleteAllByConversation(findConversationByParticipants(sender, receiver).orElseThrow(() ->
+                    new ConversationNotFoundedException("Conversation not founded!")));
     }
 }

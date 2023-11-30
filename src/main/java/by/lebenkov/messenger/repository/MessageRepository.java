@@ -13,4 +13,6 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
     List<Message> findByConversationOrderByDateTimeAsc(Conversation conversation);
 
     Message findFirstByConversationOrderByDateTimeDesc(Conversation conversation);
+
+    void deleteAllByConversation(Conversation conversation);
 }

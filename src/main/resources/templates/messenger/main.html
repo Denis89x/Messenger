@@ -160,7 +160,16 @@
 		<hr>
 		<div class="receiver-function">
 			<a href="#">Block user</a>
-			<a href="#">Clear history</a>
+			<!--<a th:href="@{'/messenger/clear-history/' + ${receiver.getUsername()}}">Clear history</a>-->
+<!--			<form th:action="@{'/messenger/clear-history/' + ${receiver.getUsername()}}" method="post">
+				<input type="hidden" name="_method" value="post" />
+				<button type="submit">Clear history</button>
+			</form>-->
+			<form th:action="@{'/messenger/clear-history/' + ${receiver.getUsername()}}" method="post" th:csrf>
+				<input type="hidden" name="_method" value="post" />
+				<button type="submit">Clear history</button>
+			</form>
+
 			<a href="#">Delete conversation</a>
 		</div>
 	</div>
