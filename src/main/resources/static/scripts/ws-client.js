@@ -114,7 +114,7 @@ function showMessages(message) {
 }
 
 $(function () {
-    $("form").on('submit', (e) => e.preventDefault());
+    $(".message-form").on('submit', (e) => e.preventDefault());
     connect();
     $("#disconnect").click(() => disconnect());
     $("#send").click(() => sendMessage());

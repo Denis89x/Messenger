@@ -13,6 +13,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,6 @@ public class MessengerController {
     public String showMessageWithReceiver(@PathVariable String receiverUsername, Model model) {
         Account currentUser = messengerServiceImp.getAuthenticatedAccount();
 
-        System.out.println("Мы тута");
         List<Message> messages = messengerServiceImp.getConversationMessages(currentUser.getUsername(), receiverUsername);
         List<MessageView> list = messengerServiceImp.processMessages(messages);
 
@@ -77,12 +77,13 @@ public class MessengerController {
         return new MessageDTO(principal.getName(), receiver, messageContent);
     }
 
+
     @PostMapping("/clear-history/{receiver}")
     public String clearDialogHistory(@PathVariable String receiver) {
         messengerServiceImp.clearHistory(
                 messengerServiceImp.getAuthenticatedAccount().getUsername(),
                 receiver);
-        return "redirect:/messenger/" + receiver;
+        return "redirect:/messenger/second";
     }
 
     @PostMapping(START_DIALOG)

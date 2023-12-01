@@ -316,3 +316,16 @@ li.user-message-o {
     display: inline-block;
     margin: 20px auto;
 }
+
+/*
+.receiver-function button {
+    border: none;
+    background: none;
+    color: #1888ff;
+    padding-left: 0;
+}
+
+.receiver-function button:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}*/
