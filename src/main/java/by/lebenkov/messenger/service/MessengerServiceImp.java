@@ -18,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -256,21 +259,13 @@ public class MessengerServiceImp implements MessengerService {
     }
 
     private Optional<Conversation> findConversationByParticipants(String senderUsername, String receiverUsername) {
+        return findByParticipants(findParticipants(senderUsername, receiverUsername));
+    }
+
+    private List<ConversationParticipant> findParticipants(String senderUsername, String receiverUsername) {
         List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
 
-        ConversationParticipant sender = commonParticipants.get(0);
-        ConversationParticipant receiver = commonParticipants.get(1);
-
-        if (sender != null && receiver != null) {
-
-            List<ConversationParticipant> participants = new ArrayList<>();
-            participants.add(sender);
-            participants.add(receiver);
-
-            return findByParticipants(participants);
-        }
-
-        return Optional.empty();
+        return commonParticipants.size() == 2 ? commonParticipants.subList(0, 2) : Collections.emptyList();
     }
 
     @Transactional
@@ -278,5 +273,23 @@ public class MessengerServiceImp implements MessengerService {
         if (sender != null && receiver != null)
             messageRepository.deleteAllByConversation(findConversationByParticipants(sender, receiver).orElseThrow(() ->
                     new ConversationNotFoundedException("Conversation not founded!")));
+    }
+
+    @Transactional
+    public void deleteConversation(String sender, String receiver) {
+        if (sender != null && receiver != null) {
+            clearHistory(sender, receiver);
+
+            Conversation conversation = findConversationByParticipants(sender, receiver)
+                    .orElseThrow(() -> new ConversationNotFoundedException("Conversation not founded!"));
+
+            conversationPartRepository.deleteAllByConversation(conversation);
+
+            conversationRepository.deleteById(conversation.getId());
+        }
+    }
+
+    public void deleteMessage(Integer messageId) {
+        messageRepository.deleteById(messageId);
     }
 }

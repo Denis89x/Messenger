@@ -73,24 +73,31 @@
 				</th:block>
 				<th:block th:if="${message.isMyAccount()}">
 					<div class="my-account">
-						<div class="user-message-o own-message">
+						<div class="user-message-o own-message"
+						     th:attr="data-messageId=${message.getMessage().getId()}">
 							<p th:text="${message.getMessage().getContent()}"></p>
+							<button class="delete-message-button" onclick="deleteMessage(this)">
+								&times;
+							</button>
 						</div>
 						<th:block th:if="${iterStat.index > 0}">
 							<th:block th:if="${messages[iterStat.index - 1].isMyAccount()}">
 								<th:block th:if="${T(java.time.temporal.ChronoUnit).HOURS.between(
 									messages[iterStat.index - 1].getMessage().getDateTime(), message.getMessage().getDateTime()) > 1}">
-									<span th:text="${#temporals.format(message.getMessage().getDateTime(), 'HH:mm')}" class="message-date"></span>
+									<span th:text="${#temporals.format(message.getMessage().getDateTime(), 'HH:mm')}"
+									      class="message-date"></span>
 								</th:block>
 							</th:block>
 						</th:block>
 						<th:block th:if="${iterStat.index + 1 < messages.size()}">
 							<th:block th:if="${!messages[iterStat.index + 1].isMyAccount()}">
-								<span th:text="${#temporals.format(message.getMessage().getDateTime(), 'HH:mm')}" class="message-date"></span>
+								<span th:text="${#temporals.format(message.getMessage().getDateTime(), 'HH:mm')}"
+								      class="message-date"></span>
 							</th:block>
 							<th:block th:if="${messages[iterStat.index + 1].getMessage().getDateTime().getDayOfMonth() >
 								message.getMessage().getDateTime().getDayOfMonth()}">
-								<span th:text="${#temporals.format(message.getMessage().getDateTime(), 'HH:mm')}" class="message-date"></span>
+								<span th:text="${#temporals.format(message.getMessage().getDateTime(), 'HH:mm')}"
+								      class="message-date"></span>
 							</th:block>
 						</th:block>
 					</div>
@@ -108,7 +115,8 @@
 							<div class="user-message">
 								<p th:text="${message.getMessage().getContent()}"></p>
 							</div>
-							<span th:text="${#temporals.format(message.getMessage().getDateTime(), 'HH:mm')}" class="message-date"></span>
+							<span th:text="${#temporals.format(message.getMessage().getDateTime(), 'HH:mm')}"
+							      class="message-date"></span>
 						</div>
 						<th:block th:if="${!message.isPicture()}">
 							<div class="user-message-picture">
@@ -117,7 +125,8 @@
 							<th:block th:if="${iterStat.index + 1 < messages.size()}">
 								<th:block th:if="${messages[iterStat.index + 1].getMessage().getDateTime().getDayOfMonth() >
 								message.getMessage().getDateTime().getDayOfMonth()}">
-									<span th:text="${#temporals.format(message.getMessage().getDateTime(), 'HH:mm')}" class="message-date"></span>
+									<span th:text="${#temporals.format(message.getMessage().getDateTime(), 'HH:mm')}"
+									      class="message-date"></span>
 								</th:block>
 							</th:block>
 						</th:block>
@@ -160,10 +169,31 @@
 		<hr>
 		<div class="receiver-function">
 			<a href="#">Block user</a>
-			<form th:action="@{'/messenger/clear-history/' + ${receiver.getUsername()}}" method="post" th:csrf class="clear-history-form">
-				<button type="submit" th:type="submit">Clear history</button>
-			</form>
-			<a href="#">Delete conversation</a>
+			<button id="open-clear-history">Clear history</button>
+			<button id="open-delete-conversation">Delete conversation</button>
+		</div>
+	</div>
+	<div id="clear-modal-window" class="modal-window" th:if="${receiver != null}">
+		<div class="modal-content">
+			<p>Are you sure?</p>
+			<div class="modal-selected-button">
+				<button id="cancel-clear-history">Cancel</button>
+				<form th:action="@{'/messenger/clear-history/' + ${receiver.getUsername()}}" method="post" th:csrf>
+					<button type="submit" th:type="submit" id="clear-history">Clear history</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div id="delete-modal-window" class="modal-window" th:if="${receiver != null}">
+		<div class="modal-content">
+			<p>Are you sure?</p>
+			<div class="modal-selected-button">
+				<button id="cancel-delete-conversation">Cancel</button>
+				<form th:action="@{'/messenger/delete-conversation/' + ${receiver.getUsername()}}" method="post"
+				      th:csrf>
+					<button type="submit" th:type="submit" id="delete-conversation">Delete conversation</button>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>

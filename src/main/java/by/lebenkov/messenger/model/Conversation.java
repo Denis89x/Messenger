@@ -14,7 +14,6 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
 public class Conversation {
 
     @Id
@@ -26,7 +25,7 @@ public class Conversation {
     @ToString.Exclude
     private List<Message> messages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.REMOVE)
     @ToString.Exclude
     private List<ConversationParticipant> participants = new ArrayList<>();
 }

@@ -30,3 +30,48 @@ function smoothScrollTo(element, target, duration) {
 
     requestAnimationFrame(scrollToTop);
 }
+
+let clearModalWindow = document.getElementById("clear-modal-window");
+let deleteModalWindow = document.getElementById("delete-modal-window");
+
+let openHistory = document.getElementById("open-clear-history");
+let cancelHistory = document.getElementById("cancel-clear-history");
+let clearHistory = document.getElementById("clear-history")
+
+let openConversation = document.getElementById("open-delete-conversation");
+let cancelConversation = document.getElementById("cancel-delete-conversation");
+let clearConversation = document.getElementById("delete-conversation")
+
+openHistory.onclick = function () {
+    clearModalWindow.style.display = "block";
+}
+
+openConversation.onclick = function () {
+    deleteModalWindow.style.display = "block";
+}
+
+cancelHistory.onclick = function () {
+    clearModalWindow.style.display = "none";
+}
+
+cancelConversation.onclick = function () {
+    deleteModalWindow.style.display = "none";
+}
+
+clearHistory.onclick = function () {
+    clearModalWindow.style.display = "none"
+}
+
+clearConversation.onclick = function () {
+    deleteModalWindow.style.display = "none"
+}
+
+
+window.onclick = function (event) {
+    if (event.target === clearModalWindow) {
+        clearModalWindow.style.display = "none";
+    }
+    if (event.target === deleteModalWindow) {
+        deleteModalWindow.style.display = "none";
+    }
+}

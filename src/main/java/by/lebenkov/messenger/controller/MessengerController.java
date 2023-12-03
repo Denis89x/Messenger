@@ -13,7 +13,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +30,11 @@ public class MessengerController {
 
     MessengerServiceImp messengerServiceImp;
     AccountServiceImp accountServiceImp;
+    SimpMessagingTemplate messagingTemplate;
 
     private static final String MESSENGER_ENDPOINT = "/{receiverUsername}";
     private static final String START_DIALOG = "/start-dialog";
+    private static final String CLEAR_HISTORY = "/clear-history/{receiver}";
 
     @GetMapping
     public String showMenu(Model model) {
@@ -70,20 +72,33 @@ public class MessengerController {
         return "messenger/main";
     }
 
-    @MessageMapping("/send-message/{receiver}")
-    @SendTo("/topic/chatroom")
-    public MessageDTO send(@DestinationVariable String receiver, @Payload String messageContent, Principal principal) {
+    @MessageMapping("/send-message/{chatroom}/{receiver}")
+    @SendTo("/topic/chatroom/{chatroom}")
+    public MessageDTO send(@DestinationVariable String chatroom, @DestinationVariable String receiver, @Payload String messageContent, Principal principal) {
         messengerServiceImp.commitMessageOrFindParticipants(principal.getName(), receiver, messageContent, "commit");
         return new MessageDTO(principal.getName(), receiver, messageContent);
     }
 
-
-    @PostMapping("/clear-history/{receiver}")
+    @PostMapping(CLEAR_HISTORY)
     public String clearDialogHistory(@PathVariable String receiver) {
         messengerServiceImp.clearHistory(
                 messengerServiceImp.getAuthenticatedAccount().getUsername(),
                 receiver);
-        return "redirect:/messenger/second";
+        return "redirect:/messenger/" + receiver;
+    }
+
+    @PostMapping("/delete-conversation/{receiver}")
+    public String deleteConversation(@PathVariable String receiver) {
+        messengerServiceImp.deleteConversation(
+                messengerServiceImp.getAuthenticatedAccount().getUsername(),
+                receiver);
+        return "redirect:/messenger";
+    }
+
+    @MessageMapping("/delete-message/{messageId}")
+    public void deleteMessage(@Payload Integer messageId) {
+        messengerServiceImp.deleteMessage(messageId);
+        messagingTemplate.convertAndSend("/topic/chatroom", "MessageDeleted:" + messageId);
     }
 
     @PostMapping(START_DIALOG)

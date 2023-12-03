@@ -4,7 +4,12 @@ const stompClient = new StompJs.Client({
 
 stompClient.onConnect = (frame) => {
     console.log('Connected: ' + frame);
-    stompClient.subscribe('/topic/chatroom', (message) => {
+
+    let receiverUsername = $("#receiver-username").data("username");
+    let senderUsername = $("#current-username").data("username");
+    let chatroom = [senderUsername, receiverUsername].sort().join("-");
+
+    stompClient.subscribe(`/topic/chatroom/${chatroom}`, (message) => {
         showMessages(JSON.parse(message.body));
     });
 };
@@ -29,14 +34,34 @@ function disconnect() {
 
 function sendMessage() {
     let receiverUsername = $("#receiver-username").data("username");
+    let senderUsername = $("#current-username").data("username");
+
+    let chatroom = [senderUsername, receiverUsername].sort().join("-");
+
     stompClient.publish({
-        destination: "/messenger/send-message/" + receiverUsername,
+        destination: `/messenger/send-message/${chatroom}/${receiverUsername}`,
         body: $("#message").val()
     });
     $("#message").val("");
 
     let messagesContainer = document.getElementById("messages");
     smoothScrollTo(messagesContainer, messagesContainer.scrollHeight, 700);
+}
+
+function deleteMessage(button) {
+    const messageDiv = button.closest('.user-message-o');
+
+    // Получаем значение атрибута data-messageId
+    const messageId = messageDiv.getAttribute('data-messageId');
+
+    // Отправляем запрос на удаление сообщения
+    stompClient.publish({
+        destination: "/messenger/delete-message/" + messageId,
+        body: JSON.stringify(messageId)
+    });
+
+    // Убираем элемент из DOM
+    messageDiv.remove();
 }
 
 let previousMessageSender = null;
@@ -57,14 +82,16 @@ function showMessages(message) {
             "</div>" +
             "</div>");
         previousMessageSender = null;
+        let lastSenderMessages = $(".user-message-n[data-streak='" + streak + "']");
+        if (lastSenderMessages.length > 0) {
+            lastSenderMessages.removeAttr('data-streak');
+        }
         streak = 0;
     } else {
         if (previousMessageSender === message.senderUsername) {
             if (streak === 0) {
-                console.log('Нашли зироу');
                 let elementToModify = $(".user-message-n[data-streak='" + streak + "']");
                 let textFromParagraph = elementToModify.find('.user-message p').text();
-                console.log("streak: " + streak + ", contentFounded: " + textFromParagraph)
                 elementToModify.html(
                     "<p class='messenger-username'>" + message.senderUsername + "</p>" +
                     "<div class='user-message-picture'>" +
@@ -72,20 +99,22 @@ function showMessages(message) {
                     "</p>" +
                     "</div>"
                 );
+                elementToModify.removeAttr('data-streak');
             } else {
-                console.log('не нашли зироу: ' + streak);
                 let elementToModify = $(".user-message-n[data-streak='" + streak + "']");
                 let textFromParagraph = elementToModify.find('.user-message p').text();
-                console.log("streak: " + streak + ", contentFounded: " + textFromParagraph)
                 elementToModify.html(
                     "<div class='user-message-picture'>" +
-                    "<p>" + textFromParagraph + "</p>" +
+                    "<p>" + textFromParagraph +
+                    "</p>" +
                     "</div>"
                 );
+                elementToModify.removeAttr('data-streak');
             }
 
             streak++;
 
+            console.log("После увеличения стрика");
             $("#messages").append(
                 "<div class='user-message-n' data-streak='" + streak + "'>" +
                 "<div>" +
@@ -98,6 +127,12 @@ function showMessages(message) {
                 "</div>" +
                 "</div>");
         } else {
+            let lastSenderMessages = $(".user-message-n[data-streak='" + streak + "']");
+            if (lastSenderMessages.length > 0) {
+                lastSenderMessages.removeAttr('data-streak');
+            }
+            streak = 0;
+
             $("#messages").append(
                 "<div class='user-message-n' data-streak='" + streak + "'>" +
                 "<p class='messenger-username'>" + message.senderUsername + "</p>" +
