@@ -74,9 +74,15 @@ public class MessengerController {
 
     @MessageMapping("/send-message/{chatroom}/{receiver}")
     @SendTo("/topic/chatroom/{chatroom}")
-    public MessageDTO send(@DestinationVariable String chatroom, @DestinationVariable String receiver, @Payload String messageContent, Principal principal) {
-        messengerServiceImp.commitMessageOrFindParticipants(principal.getName(), receiver, messageContent, "commit");
-        return new MessageDTO(principal.getName(), receiver, messageContent);
+    public MessageDTO send(@DestinationVariable String receiver, @Payload String messageContent, Principal principal) {
+        Message message = messengerServiceImp.commitMessageOrFindParticipants(principal.getName(), receiver, messageContent, "commit");
+        return new MessageDTO(message.getId(), principal.getName(), receiver, messageContent);
+    }
+
+    @MessageMapping("/delete-message/{chatroom}/{messageId}")
+    public void deleteMessage(@Payload Integer messageId) {
+        messengerServiceImp.deleteMessage(messageId);
+        messagingTemplate.convertAndSend("/topic/chatroom/{chatroom}", "MessageDeleted:" + messageId);
     }
 
     @PostMapping(CLEAR_HISTORY)
@@ -93,12 +99,6 @@ public class MessengerController {
                 messengerServiceImp.getAuthenticatedAccount().getUsername(),
                 receiver);
         return "redirect:/messenger";
-    }
-
-    @MessageMapping("/delete-message/{messageId}")
-    public void deleteMessage(@Payload Integer messageId) {
-        messengerServiceImp.deleteMessage(messageId);
-        messagingTemplate.convertAndSend("/topic/chatroom", "MessageDeleted:" + messageId);
     }
 
     @PostMapping(START_DIALOG)

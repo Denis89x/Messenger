@@ -2,12 +2,12 @@ const stompClient = new StompJs.Client({
     brokerURL: 'ws://localhost:8080/chat'
 });
 
+let receiverUsername = $("#receiver-username").data("username");
+let senderUsername = $("#current-username").data("username");
+let chatroom = [senderUsername, receiverUsername].sort().join("-");
+
 stompClient.onConnect = (frame) => {
     console.log('Connected: ' + frame);
-
-    let receiverUsername = $("#receiver-username").data("username");
-    let senderUsername = $("#current-username").data("username");
-    let chatroom = [senderUsername, receiverUsername].sort().join("-");
 
     stompClient.subscribe(`/topic/chatroom/${chatroom}`, (message) => {
         showMessages(JSON.parse(message.body));
@@ -33,11 +33,6 @@ function disconnect() {
 }
 
 function sendMessage() {
-    let receiverUsername = $("#receiver-username").data("username");
-    let senderUsername = $("#current-username").data("username");
-
-    let chatroom = [senderUsername, receiverUsername].sort().join("-");
-
     stompClient.publish({
         destination: `/messenger/send-message/${chatroom}/${receiverUsername}`,
         body: $("#message").val()
@@ -51,16 +46,15 @@ function sendMessage() {
 function deleteMessage(button) {
     const messageDiv = button.closest('.user-message-o');
 
-    // Получаем значение атрибута data-messageId
     const messageId = messageDiv.getAttribute('data-messageId');
 
-    // Отправляем запрос на удаление сообщения
+    console.log("chatroom: " + chatroom);
+
     stompClient.publish({
-        destination: "/messenger/delete-message/" + messageId,
+        destination: `/messenger/delete-message/${chatroom}/` + messageId,
         body: JSON.stringify(messageId)
     });
 
-    // Убираем элемент из DOM
     messageDiv.remove();
 }
 
@@ -75,13 +69,21 @@ function showMessages(message) {
         receiverPicture = "/images/person.jpg";
 
     if (message.senderUsername === currentUsername) {
-        $("#messages").append("" +
-            "<div class='my-account'>" +
+        let newMessage = $("<div class='my-account'>" +
             "<div class='user-message-o own-message'>" +
             "<p>" + message.content + "</p>" +
+            "<button class='delete-message-button' onClick='deleteMessage(this)'>" +
+            "&times;" +
+            "</button>" +
             "</div>" +
             "</div>");
+
+        newMessage.find('.own-message').attr('data-messageId', message.messageId);
+
+        $("#messages").append(newMessage)
+
         previousMessageSender = null;
+
         let lastSenderMessages = $(".user-message-n[data-streak='" + streak + "']");
         if (lastSenderMessages.length > 0) {
             lastSenderMessages.removeAttr('data-streak');
@@ -114,7 +116,6 @@ function showMessages(message) {
 
             streak++;
 
-            console.log("После увеличения стрика");
             $("#messages").append(
                 "<div class='user-message-n' data-streak='" + streak + "'>" +
                 "<div>" +
