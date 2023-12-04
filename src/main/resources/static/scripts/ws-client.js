@@ -14,6 +14,8 @@ stompClient.onConnect = (frame) => {
     });
 };
 
+/*afa*/
+
 stompClient.onWebSocketError = (error) => {
     console.error('Error with websocket', error);
 };
