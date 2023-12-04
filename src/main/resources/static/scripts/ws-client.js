@@ -48,8 +48,6 @@ function deleteMessage(button) {
 
     const messageId = messageDiv.getAttribute('data-messageId');
 
-    console.log("chatroom: " + chatroom);
-
     stompClient.publish({
         destination: `/messenger/delete-message/${chatroom}/` + messageId,
         body: JSON.stringify(messageId)
