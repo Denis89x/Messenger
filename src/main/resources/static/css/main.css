@@ -123,13 +123,19 @@ li.user-message-o {
 }
 
 .user-message-picture,
-.user-message,
-.own-message {
+.user-message {
     background-color: #eef1f4;
     padding: 10px;
     border-radius: 15px 15px 15px 0;
     margin: 5px;
     display: inline-block;
+}
+
+.own-message {
+    background-color: #eef1f4;
+    padding: 10px;
+    border-radius: 15px 15px 15px 0;
+    margin: 5px;
 }
 
 .user-message-picture {
