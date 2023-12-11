@@ -3,6 +3,7 @@
     background-color: #FAFAFB;
     margin-top: 56px;
     height: 94vh;
+    display: flex;
 }
 
 .settings-left-side {
@@ -17,18 +18,50 @@
     list-style-type: none;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding-left: 29px;
+    gap: 17px;
+    padding-left: 17px;
 }
 
-.settings-left-side li {
-    color: #A09898;
+.settings-left-side a {
+    color: black;
+    font-weight: 400;
+    padding: 7px;
+    border-radius: 1px;
+}
+
+.settings-left-side a:hover {
+    text-decoration: none;
+    background-color: rgb(231 231 231);
 }
 
 .settings-information {
-    margin-left: 147px;
+    margin-left: 240px;
     padding-top: 59px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
+}
+
+.settings-right-side {
+    width: 1410px;
+}
+
+.settings-right-side-block {
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.settings-title {
+    font-weight: 700;
+    padding-left: 27px;
+}
+
+.settings-profile-block {
+    width: 1046px;
+    height: 510px;
+    border-radius: 0.75rem;
+    background-color: #FFFFFF;
+    --tw-shadow: 0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);
 }
