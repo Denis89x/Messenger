@@ -17,10 +17,19 @@ public class AccountDTO {
     @NotEmpty(message = "Логин не должен быть пустым")
     private String username;
 
-    @Size(min = 10, max = 30, message = "Адресс почты должен корректным")
-    @NotEmpty(message = "Адресс почты должен корректным")
+    @Size(min = 10, max = 30, message = "Адрес с почты должен корректным")
+    @NotEmpty(message = "Адрес с почты должен корректным")
     @Email()
     private String email;
+
+    @Size(min = 3, max = 20, message = "Имя должно быть длиной от 3 до 20 символов")
+    @NotEmpty(message = "Имя не должно быть пустым")
+    private String firstName;
+
+    @Size(min = 3, max = 20, message = "Фамилия должна быть длиной от 3 до 20 символов")
+    @NotEmpty(message = "Фамилия не должна быть пустой")
+    private String lastName;
+
 
     private String password;
 }

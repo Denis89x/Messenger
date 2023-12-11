@@ -2,15 +2,21 @@ const stompClient = new StompJs.Client({
     brokerURL: 'ws://localhost:8080/chat'
 });
 
+let receiverUsername = $("#receiver-username").data("username");
+let senderUsername = $("#current-username").data("username");
+let chatroom = [senderUsername, receiverUsername].sort().join("-");
+
 stompClient.onConnect = (frame) => {
     console.log('Connected: ' + frame);
 
-    let receiverUsername = $("#receiver-username").data("username");
-    let senderUsername = $("#current-username").data("username");
-    let chatroom = [senderUsername, receiverUsername].sort().join("-");
-
     stompClient.subscribe(`/topic/chatroom/${chatroom}`, (message) => {
+        console.log("Подписали на 1");
         showMessages(JSON.parse(message.body));
+    });
+
+    stompClient.subscribe(`/topic/notifications/${senderUsername}`, (notification) => {
+        console.log("Подписали на уведомления");
+        showNotification(JSON.parse(notification.body));
     });
 };
 
@@ -35,16 +41,11 @@ function disconnect() {
 }
 
 function sendMessage() {
-    let receiverUsername = $("#receiver-username").data("username");
-    let senderUsername = $("#current-username").data("username");
-
-    let chatroom = [senderUsername, receiverUsername].sort().join("-");
-
+    let messageContent = $("#message").val();
     stompClient.publish({
         destination: `/messenger/send-message/${chatroom}/${receiverUsername}`,
-        body: $("#message").val()
+        body: messageContent
     });
-    $("#message").val("");
 
     let messagesContainer = document.getElementById("messages");
     smoothScrollTo(messagesContainer, messagesContainer.scrollHeight, 700);
@@ -53,16 +54,13 @@ function sendMessage() {
 function deleteMessage(button) {
     const messageDiv = button.closest('.user-message-o');
 
-    // Получаем значение атрибута data-messageId
     const messageId = messageDiv.getAttribute('data-messageId');
 
-    // Отправляем запрос на удаление сообщения
     stompClient.publish({
-        destination: "/messenger/delete-message/" + messageId,
+        destination: `/messenger/delete-message/${chatroom}/` + messageId,
         body: JSON.stringify(messageId)
     });
 
-    // Убираем элемент из DOM
     messageDiv.remove();
 }
 
@@ -71,19 +69,29 @@ let streak = 0;
 let receiverPicture = $("#receiver-picture").data("picture");
 
 function showMessages(message) {
-    let currentUsername = $("#current-username").data("username");
-
     if (receiverPicture === undefined)
         receiverPicture = "/images/person.jpg";
 
-    if (message.senderUsername === currentUsername) {
-        $("#messages").append("" +
-            "<div class='my-account'>" +
+    if (message.senderUsername !== senderUsername) {
+        showNotification(message.senderUsername, message.content);
+    }
+
+    if (message.senderUsername === senderUsername) {
+        let newMessage = $("<div class='my-account'>" +
             "<div class='user-message-o own-message'>" +
             "<p>" + message.content + "</p>" +
+            "<button class='delete-message-button' onClick='deleteMessage(this)'>" +
+            "&times;" +
+            "</button>" +
             "</div>" +
             "</div>");
+
+        newMessage.find('.own-message').attr('data-messageId', message.messageId);
+
+        $("#messages").append(newMessage)
+
         previousMessageSender = null;
+
         let lastSenderMessages = $(".user-message-n[data-streak='" + streak + "']");
         if (lastSenderMessages.length > 0) {
             lastSenderMessages.removeAttr('data-streak');
@@ -116,7 +124,6 @@ function showMessages(message) {
 
             streak++;
 
-            console.log("После увеличения стрика");
             $("#messages").append(
                 "<div class='user-message-n' data-streak='" + streak + "'>" +
                 "<div>" +
@@ -147,6 +154,26 @@ function showMessages(message) {
                 "</div>");
         }
         previousMessageSender = message.senderUsername;
+    }
+}
+
+function showNotification(sender, content) {
+    $("#notification-container").append(
+        "<div class='notification'>" +
+        "<p>" + sender + " Отправил сообщение: " + content + "</p>" +
+        "</div>"
+    );
+    console.log("Сами уведомления");
+
+    // Дополнительно можно использовать браузерные уведомления (Notification API)
+    if (Notification.permission === "granted") {
+        new Notification(sender, { body: content });
+    } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                new Notification(sender, { body: content });
+            }
+        });
     }
 }
 

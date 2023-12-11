@@ -53,7 +53,7 @@ public class MessengerServiceImp implements MessengerService {
     }
 
     @Transactional
-    public void commitMessageOrFindParticipants(String senderUsername, String receiverUsername, String content, String type) {
+    public Message commitMessageOrFindParticipants(String senderUsername, String receiverUsername, String content, String type) {
         List<ConversationParticipant> commonParticipants = commonParticipantsServiceImp.findCommonParticipants(senderUsername, receiverUsername);
 
         ConversationParticipant sender = null;
@@ -68,35 +68,39 @@ public class MessengerServiceImp implements MessengerService {
         Optional<Account> receiverM = accountRepository.findByUsername(receiverUsername);
 
         if (senderM.isPresent() && receiverM.isPresent() && (sender == null && receiver == null)) {
-            processParticipants(senderM, receiverM, content, type);
+            return processParticipants(senderM, receiverM, content, type);
         }
 
         if (sender != null && receiver != null) {
-            processIndividualParticipants(sender, receiver, content, type);
+            return processIndividualParticipants(sender, receiver, content, type);
         }
+
+        return null;
     }
 
     @Transactional
-    public void processParticipants(Optional<Account> senderM, Optional<Account> receiverM, String content, String type) {
+    public Message processParticipants(Optional<Account> senderM, Optional<Account> receiverM, String content, String type) {
         List<ConversationParticipant> senders = conversationPartRepository.findAllByAccount(senderM.get());
         List<ConversationParticipant> receivers = conversationPartRepository.findAllByAccount(receiverM.get());
         ConversationParticipant senderParticipant = senders.isEmpty() ? createParticipant(senderM.get()) : senders.get(0);
         ConversationParticipant receiverParticipant = receivers.isEmpty() ? createParticipant(receiverM.get()) : receivers.get(0);
 
         if (type.equals("commit")) {
-            commitMessage(senderParticipant, receiverParticipant, content);
+            return commitMessage(senderParticipant, receiverParticipant, content);
         } else {
             findOrCreateConversation(senderParticipant, receiverParticipant);
         }
+        return null;
     }
 
     @Transactional
-    public void processIndividualParticipants(ConversationParticipant sender, ConversationParticipant receiver, String content, String type) {
+    public Message processIndividualParticipants(ConversationParticipant sender, ConversationParticipant receiver, String content, String type) {
         if (type.equals("commit")) {
-            commitMessage(sender, receiver, content);
+            return commitMessage(sender, receiver, content);
         } else {
             findOrCreateConversation(sender, receiver);
         }
+        return null;
     }
 
     @Override
@@ -106,7 +110,7 @@ public class MessengerServiceImp implements MessengerService {
 
 
     @Transactional
-    public void commitMessage(ConversationParticipant sender, ConversationParticipant receiver, String content) {
+    public Message commitMessage(ConversationParticipant sender, ConversationParticipant receiver, String content) {
         Conversation conversation = findOrCreateConversation(sender, receiver);
 
         Message message = new Message();
@@ -116,7 +120,7 @@ public class MessengerServiceImp implements MessengerService {
         message.setDateTime(LocalDateTime.now());
         message.setIsChecked(false);
 
-        messageRepository.save(message);
+        return messageRepository.save(message);
     }
 
     @Override

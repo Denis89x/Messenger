@@ -1,0 +1,34 @@
+.settings-block {
+    width: 100%;
+    background-color: #FAFAFB;
+    margin-top: 56px;
+    height: 94vh;
+}
+
+.settings-left-side {
+    width: 510px;
+    height: 94vh;
+    top: 0;
+    left: 0;
+    font-weight: 700;
+}
+
+.settings-left-side ul {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 29px;
+}
+
+.settings-left-side li {
+    color: #A09898;
+}
+
+.settings-information {
+    margin-left: 147px;
+    padding-top: 59px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

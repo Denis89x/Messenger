@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Settings</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
+	      integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+	<link href="/css/menu-line.css" rel="stylesheet">
+	<link href="/css/settings.css" rel="stylesheet">
+	<script crossorigin="anonymous" src="https://kit.fontawesome.com/a1a44e76b4.js"></script>
+	<script src="/scripts/settings.js"></script>
+</head>
+<body>
+<div class="header">
+	<div class="left-side">
+		<a href="/messenger" class="header-name">
+			<img src="/images/logo.svg" alt="Logo">
+			L-Message
+		</a>
+	</div>
+	<div class="right-side">
+		<a href="/profile">
+			<img src="/images/settings.svg" alt="Settings" class="settings-image">
+		</a>
+		<a href="#">
+			<img src="/images/about.svg" alt="About" class="about-image">
+		</a>
+		<img th:if="${account.profilePicture}" th:src="${account.profilePicture}" alt="Profile Picture"
+		     class="exist-image"/>
+		<img th:unless="${account.profilePicture}" src="/images/avatar.svg" alt="Profile Picture" class="user-image"/>
+	</div>
+</div>
+<div class="settings-block">
+	<div class="settings-left-side">
+		<div class="settings-information">
+			<span>Настройки</span>
+			<ul>
+				<li>Профиль</li>
+				<li>Безопасность</li>
+			</ul>
+		</div>
+	</div>
+</div>
+</body>
+</html>
