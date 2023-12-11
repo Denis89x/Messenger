@@ -37,8 +37,8 @@ function togglePasswordForm() {
     if (passwordForm.style.display === "none") {
         passwordForm.style.display = "block";
         passwordError.style.display = "none";
-        oldPasswordDiv.style.display = "block"; // Показываем блок с вводом текущего пароля
-        newPasswordDiv.style.display = "none"; // Скрываем блок с вводом нового пароля
+        oldPasswordDiv.style.display = "block";
+        newPasswordDiv.style.display = "none";
     } else {
         passwordForm.style.display = "none";
     }
@@ -77,32 +77,23 @@ function toggleVerificationCodeBlock() {
     }
 }
 
-
 function showArrow() {
-    // Находим элемент с идентификатором 'upload-arrow'
-    var arrow = document.getElementById('upload-arrow');
-    // Показываем стрелочку вверх
+    let arrow = document.getElementById('upload-arrow');
     arrow.style.display = 'block';
 }
 
 function hideArrow() {
-    // Находим элемент с идентификатором 'upload-arrow'
-    var arrow = document.getElementById('upload-arrow');
-    // Скрываем стрелочку вверх
+    let arrow = document.getElementById('upload-arrow');
     arrow.style.display = 'none';
 }
 
 function uploadNewPicture() {
-    // Находим элемент с идентификатором 'file-input'
-    var fileInput = document.getElementById('file-input');
-    // Открываем окно выбора файла
+    let fileInput = document.getElementById('file-input');
     fileInput.click();
 }
 
 function uploadPicture() {
-    // Находим элемент с идентификатором 'upload-form'
-    var uploadForm = document.getElementById('upload-form');
-    // Отправляем форму на сервер
+    let uploadForm = document.getElementById('upload-form');
     uploadForm.submit();
 }
 

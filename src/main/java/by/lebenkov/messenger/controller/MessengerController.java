@@ -1,6 +1,7 @@
 package by.lebenkov.messenger.controller;
 
 import by.lebenkov.messenger.dto.MessageDTO;
+import by.lebenkov.messenger.dto.NotificationDTO;
 import by.lebenkov.messenger.model.Account;
 import by.lebenkov.messenger.model.Message;
 import by.lebenkov.messenger.model.MessageView;
@@ -9,6 +10,7 @@ import by.lebenkov.messenger.service.MessengerServiceImp;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -22,6 +24,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Controller
 @RequestMapping("/messenger")
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -76,7 +79,16 @@ public class MessengerController {
     @SendTo("/topic/chatroom/{chatroom}")
     public MessageDTO send(@DestinationVariable String receiver, @Payload String messageContent, Principal principal) {
         Message message = messengerServiceImp.commitMessageOrFindParticipants(principal.getName(), receiver, messageContent, "commit");
+
+        sendNotification(receiver, principal.getName(), messageContent);
+
         return new MessageDTO(message.getId(), principal.getName(), receiver, messageContent);
+    }
+
+    private void sendNotification(String receiver, String sender, String content) {
+        log.info("In the notification method");
+        String destination = "/topic/notifications/" + receiver;
+        messagingTemplate.convertAndSend(destination, new NotificationDTO(sender, content));
     }
 
     @MessageMapping("/delete-message/{chatroom}/{messageId}")

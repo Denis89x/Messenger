@@ -22,7 +22,7 @@ public class B2StorageService {
     @Value("${application.key.id}")
     private String applicationKeyId;
 
-    @Value("${application.key}")
+    @Value("${application.key.value}")
     private String applicationKey;
 
     @PostConstruct

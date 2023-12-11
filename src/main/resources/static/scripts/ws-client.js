@@ -10,7 +10,13 @@ stompClient.onConnect = (frame) => {
     console.log('Connected: ' + frame);
 
     stompClient.subscribe(`/topic/chatroom/${chatroom}`, (message) => {
+        console.log("Подписали на 1");
         showMessages(JSON.parse(message.body));
+    });
+
+    stompClient.subscribe(`/topic/notifications/${senderUsername}`, (notification) => {
+        console.log("Подписали на уведомления");
+        showNotification(JSON.parse(notification.body));
     });
 };
 
@@ -33,11 +39,11 @@ function disconnect() {
 }
 
 function sendMessage() {
+    let messageContent = $("#message").val();
     stompClient.publish({
         destination: `/messenger/send-message/${chatroom}/${receiverUsername}`,
-        body: $("#message").val()
+        body: messageContent
     });
-    $("#message").val("");
 
     let messagesContainer = document.getElementById("messages");
     smoothScrollTo(messagesContainer, messagesContainer.scrollHeight, 700);
@@ -61,12 +67,14 @@ let streak = 0;
 let receiverPicture = $("#receiver-picture").data("picture");
 
 function showMessages(message) {
-    let currentUsername = $("#current-username").data("username");
-
     if (receiverPicture === undefined)
         receiverPicture = "/images/person.jpg";
 
-    if (message.senderUsername === currentUsername) {
+    if (message.senderUsername !== senderUsername) {
+        showNotification(message.senderUsername, message.content);
+    }
+
+    if (message.senderUsername === senderUsername) {
         let newMessage = $("<div class='my-account'>" +
             "<div class='user-message-o own-message'>" +
             "<p>" + message.content + "</p>" +
@@ -144,6 +152,26 @@ function showMessages(message) {
                 "</div>");
         }
         previousMessageSender = message.senderUsername;
+    }
+}
+
+function showNotification(sender, content) {
+    $("#notification-container").append(
+        "<div class='notification'>" +
+        "<p>" + sender + " Отправил сообщение: " + content + "</p>" +
+        "</div>"
+    );
+    console.log("Сами уведомления");
+
+    // Дополнительно можно использовать браузерные уведомления (Notification API)
+    if (Notification.permission === "granted") {
+        new Notification(sender, { body: content });
+    } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                new Notification(sender, { body: content });
+            }
+        });
     }
 }
 

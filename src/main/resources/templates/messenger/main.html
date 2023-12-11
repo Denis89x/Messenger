@@ -43,7 +43,12 @@
 						     th:src="${username.getProfilePicture()}" alt="Profile Picture"/>
 						<img th:unless="${username.getProfilePicture}" src="/images/person.jpg"
 						     alt="Profile Picture"/>
-						<div class="profile-bio">
+						<div class="profile-bio" th:if="${username.getLastName() != null && username.getFirstName() != null}">
+							<span th:text="${username.getLastName() + ' ' + username.getFirstName()}" class="message-name"></span>
+							<span th:if="${iterStat != null}" th:text="${lastMessage.get(iterStat.index)}"
+							      class="profile-last-message"></span>
+						</div>
+						<div class="profile-bio" th:unless="${username.getLastName() != null && username.getFirstName() != null}">
 							<span th:text="${username.getUsername()}" class="message-name"></span>
 							<span th:if="${iterStat != null}" th:text="${lastMessage.get(iterStat.index)}"
 							      class="profile-last-message"></span>
@@ -151,7 +156,10 @@
 				     class="message-pic"/>
 				<img th:unless="${receiver.getProfilePicture()}"
 				     src="/images/person.jpg" alt="Profile Picture" class="message-pic"/>
-				<span th:text="${receiver.getUsername()}" class="message-name"></span>
+				<span th:if="${receiver.getLastName() != null && receiver.getFirstName() != null}"
+				      th:text="${receiver.getLastName() + ' ' + receiver.getFirstName()}" class="message-name"></span>
+				<span th:unless="${receiver.getLastName() != null && receiver.getFirstName() != null}"
+				      th:text="${receiver.getUsername()}" class="message-name"></span>
 			</div>
 			<div class="receiver-button">
 				<a th:href="@{'/messenger/'}">
@@ -196,6 +204,9 @@
 			</div>
 		</div>
 	</div>
+</div>
+<div class="notification-container">
+
 </div>
 <script src="/scripts/messenger.js"></script>
 <script src="/scripts/menu.js"></script>

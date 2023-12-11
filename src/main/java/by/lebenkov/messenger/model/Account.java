@@ -25,9 +25,15 @@ public class Account {
     @NotEmpty(message = "Логин не должен быть пустым")
     @Column(name = "username")
     private String username;
+    
+    @Column(name = "last_name")
+    private String lastName;
 
-    @Size(min = 10, max = 30, message = "Адресс почты должен корректным")
-    @NotEmpty(message = "Адресс почты должен корректным")
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Size(min = 10, max = 30, message = "Адрес почты должен корректным")
+    @NotEmpty(message = "Адрес почты должен корректным")
     @Email()
     @Column(name = "email")
     private String email;
