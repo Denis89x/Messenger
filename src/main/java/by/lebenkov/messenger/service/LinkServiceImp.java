@@ -51,8 +51,6 @@ public class LinkServiceImp implements LinkService {
             File tempFile = createTempFile(file);
             File compressedFile = compressFile(tempFile);
 
-            System.out.println("compressedFile2: " + compressedFile);
-
             B2ContentSource source = B2FileContentSource.build(compressedFile);
 
             B2UploadFileRequest request = B2UploadFileRequest.
@@ -62,10 +60,8 @@ public class LinkServiceImp implements LinkService {
 
             B2FileVersion fileVersion = client.uploadSmallFile(request);
 
-            System.out.println("tempFile: " + tempFile);
-
             tempFile.delete();
-            //compressedFile.delete();
+            compressedFile.delete();
 
             return "https://f005.backblazeb2.com/file/lebenkovMessenger/" + fileVersion.getFileName();
         } catch (B2Exception e) {
@@ -77,15 +73,12 @@ public class LinkServiceImp implements LinkService {
     private File compressFile(File tempFile) {
         try {
             File compressedFile = File.createTempFile("compressed-", ".tmp");
-            System.out.println("Compressing file: " + tempFile.getAbsolutePath());
 
             Thumbnails.of(tempFile)
                     .size(200, 200)
                     .outputFormat("png")
                     .toOutputStream(new FileOutputStream(compressedFile));
 
-            System.out.println("Compressed file created: " + compressedFile.getAbsolutePath());
-            System.out.println("Compressed file created: " + compressedFile);
             return compressedFile;
         } catch (IOException e) {
             logger.error("Ошибка при сжатии фотографии", e);
