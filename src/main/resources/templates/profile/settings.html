@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,30 +7,28 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Settings</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
-	      integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-	<link href="/css/menu-line.css" rel="stylesheet">
-	<link href="/css/settings.css" rel="stylesheet">
+		  integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+	<link href="static/css/menu-line.css" rel="stylesheet">
+	<link href="static/css/settings.css" rel="stylesheet">
 	<script crossorigin="anonymous" src="https://kit.fontawesome.com/a1a44e76b4.js"></script>
-	<script src="/scripts/settings.js"></script>
+	<script src="static/scripts/settings.js"></script>
 </head>
 <body>
 <div class="header">
 	<div class="left-side">
 		<a href="/messenger" class="header-name">
-			<img src="/images/logo.svg" alt="Logo">
+			<img src="static/images/logo.svg" alt="Logo">
 			L-Message
 		</a>
 	</div>
 	<div class="right-side">
 		<a href="/profile">
-			<img src="/images/settings.svg" alt="Settings" class="settings-image">
+			<img src="static/images/settings.svg" alt="Settings" class="settings-image">
 		</a>
 		<a href="#">
-			<img src="/images/about.svg" alt="About" class="about-image">
+			<img src="static/images/about.svg" alt="About" class="about-image">
 		</a>
-		<img th:if="${account.profilePicture}" th:src="${account.profilePicture}" alt="Profile Picture"
-		     class="exist-image"/>
-		<img th:unless="${account.profilePicture}" src="/images/avatar.svg" alt="Profile Picture" class="user-image"/>
+		<img src="static/images/avatar.svg" alt="Profile Picture" class="user-image"/>
 	</div>
 </div>
 <div class="settings-block">
@@ -47,7 +45,72 @@
 		<div class="settings-right-side-block">
 			<span class="settings-title">Профиль</span>
 			<div class="settings-profile-block">
-
+				<div class="settings-profile-photo">
+					<div class="settings-profile-photo-left">
+						<span>Фото</span>
+					</div>
+					<div class="settings-profile-photo-center">
+						<img src="static/images/person.jpg" alt="Person" class="person-image">
+					</div>
+					<div class="settings-profile-photo-right">
+						<button class="my-button">Изменить</button>
+					</div>
+				</div>
+				<hr>
+				<div class="settings-profile-account">
+					<div class="settings-profile-account-left">
+						<span>Отображаемое имя</span>
+					</div>
+					<div class="settings-profile-account-center">
+						<span>Admin</span>
+					</div>
+					<div class="settings-profile-account-right">
+						<button class="my-button">Изменить</button>
+					</div>
+				</div>
+				<hr>
+				<div class="settings-profile-username">
+					<div class="settings-profile-username-left">
+						<span>Имя пользователя</span>
+					</div>
+					<div class="settings-profile-username-center">
+						<span>Axe Axovich</span>
+					</div>
+					<div class="settings-profile-username-right">
+						<button class="my-button">Изменить</button>
+					</div>
+				</div>
+				<hr>
+				<div class="settings-profile-email">
+					<div class="settings-profile-email-left">
+						<span>Адрес электронной почты</span>
+					</div>
+					<div class="settings-profile-email-center">
+						<span>a*****h@gmail.com</span>
+					</div>
+					<div class="settings-profile-email-right">
+						<div class="email-right-unlink">
+							<button class="my-button">Отвязать</button>
+						</div>
+						<div class="email-right-change">
+							<button class="my-button">Изменить</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span class="settings-title">Безопастность</span>
+			<div class="settings-security-block">
+				<div class="settings-security-password">
+					<div class="settings-security-password-left">
+						<span>Пароль</span>
+					</div>
+					<div class="settings-security-password-center">
+						<span>*******</span>
+					</div>
+					<div class="settings-security-password-right">
+						<button class="my-button">Изменить</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

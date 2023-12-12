@@ -53,6 +53,14 @@
     gap: 28px;
 }
 
+.settings-right-side-block hr {
+    width: 1006px;
+    border-top-width: 1px;
+    color: inherit;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 .settings-title {
     font-weight: 700;
     padding-left: 27px;
@@ -60,8 +68,215 @@
 
 .settings-profile-block {
     width: 1046px;
-    height: 510px;
+    height: 404px;
     border-radius: 0.75rem;
     background-color: #FFFFFF;
-    --tw-shadow: 0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);
+    --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px -1px rgba(0, 0, 0, .1);
 }
+
+.settings-profile-block span {
+    font-weight: 400;
+}
+
+.settings-right-side button {
+    padding: 0;
+    height: 32px;
+    width: 100px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 2px solid #d4d4d4;
+    background-color: rgb(231 231 231/25%);
+    color: black;
+    transition: background-color 0.1s, color 0.1s;
+}
+
+.settings-right-side button:hover {
+    background-color: #F1F1F1;
+    color: #6E6E6E;
+}
+
+.settings-profile-photo {
+    width: 1046px;
+    height: 124px;
+    display: flex;
+    padding: 24px 28px 24px 28px;
+}
+
+.person-image {
+    width: 64px;
+    height: 64px;
+    border-radius: 50px;
+}
+
+.settings-profile-photo-left,
+.settings-profile-photo-center,
+.settings-profile-photo-right {
+    height: 64px;
+}
+
+.settings-profile-photo-left {
+    width: 160px;
+    margin-right: 8px;
+}
+
+.settings-profile-photo-center {
+    width: 664px;
+}
+
+.settings-profile-photo-right {
+    width: 166px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+.settings-profile-account {
+    width: 1046px;
+    height: 92px;
+    display: flex;
+    padding: 24px 28px 24px 28px;
+}
+
+.settings-profile-account-center span  {
+    font-weight: 700;
+}
+
+.settings-profile-account-left,
+.settings-profile-account-center,
+.settings-profile-account-right {
+    height: 32px;
+}
+
+.settings-profile-account-left {
+    width: 160px;
+    margin-right: 8px;
+}
+
+.settings-profile-account-center {
+    width: 664px;
+}
+
+.settings-profile-account-right {
+    width: 166px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+.settings-profile-username {
+    width: 1046px;
+    height: 92px;
+    display: flex;
+    padding: 24px 28px 24px 28px;
+}
+
+.settings-profile-username-center span  {
+    font-weight: 700;
+}
+
+.settings-profile-username-left,
+.settings-profile-username-center,
+.settings-profile-username-right {
+    height: 32px;
+}
+
+.settings-profile-username-left {
+    width: 160px;
+    margin-right: 8px;
+}
+
+.settings-profile-username-center {
+    width: 664px;
+}
+
+.settings-profile-username-right {
+    width: 166px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+.settings-profile-email {
+    width: 1046px;
+    height: 92px;
+    display: flex;
+    padding: 24px 28px 24px 28px;
+}
+
+.settings-profile-email-center span  {
+    font-weight: 700;
+}
+
+.settings-profile-email-left,
+.settings-profile-email-center,
+.settings-profile-email-right {
+    height: 32px;
+}
+
+.settings-profile-email-left {
+    width: 160px;
+    margin-right: 8px;
+}
+
+.settings-profile-email-center {
+    width: 582px;
+}
+
+.settings-profile-email-right {
+    width: 166px;
+    display: flex;
+    gap: 40px;
+    flex-direction: row;
+}
+
+.email-right-unlink {
+    align-items: start;
+}
+
+.email-right-change {
+    align-items: end;
+}
+
+.settings-security-block {
+    width: 1046px;
+    height: 80px;
+    border-radius: 0.75rem;
+    background-color: #ffffff;
+    --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px -1px rgba(0, 0, 0, .1);
+}
+
+.settings-security-password {
+    width: 1046px;
+    height: 92px;
+    display: flex;
+    padding: 24px 28px 24px 28px;
+}
+
+.settings-security-password-center span  {
+    font-weight: 700;
+}
+
+.settings-security-password-left,
+.settings-security-password-center,
+.settings-security-password-right {
+    height: 32px;
+}
+
+.settings-security-password-left {
+    width: 160px;
+    margin-right: 8px;
+}
+
+.settings-security-password-center {
+    width: 664px;
+}
+
+.settings-security-password-right {
+    width: 166px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+
+
